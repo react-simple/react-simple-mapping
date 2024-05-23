@@ -1,0 +1,61 @@
+{
+  "name": "@react-simple/react-simple-mapping",
+  "version": "0.5.1",
+  "description": "React Simple! ORM Library",
+  "author": "Mihály Tringel",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": "git://github.com/react-simple/react-simple-mapping",
+  "keywords": [
+    "react",
+    "simple",
+    "util",
+    "utility",
+    "utilities",
+    "helpers"
+  ],
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "source": "src/index.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "npx react-scripts test",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "tslib": "^2.6.2",
+    "@react-simple/react-simple-util": "^0.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "@babel/preset-react": "^7.24.1",
+    "@babel/preset-typescript": "^7.21.4",
+    "@react-simple/react-simple-util": "^0.5.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^15.0.4",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.2.79",
+    "babel-loader": "^9.1.3",
+    "babel-plugin-module-resolver": "^5.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "^5.0.1",
+    "rollup": "^4.14.3",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-ts": "^3.4.5",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.5"
+  },
+  "overrides": {
+    "typescript": "^5.4.5"
+  }
+}
