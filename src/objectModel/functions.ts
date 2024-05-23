@@ -259,12 +259,12 @@ export function getObjectChildMember<ValueType = unknown, RootObj extends object
 }
 
 // Does not create missing internal objects
-function getObjectChildValue_default<RootObj extends object = any>(
+function getObjectChildValue_default<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
 	options: GetObjectChildValueOptions
-): GetObjectChildValueReturn {
-	const accessor = getObjectChildMember(rootObj, fullQualifiedName, false, options);
+): GetObjectChildValueReturn<ValueType | undefined> {
+	const accessor = getObjectChildMember<ValueType | undefined>(rootObj, fullQualifiedName, false, options);
 
 	return {
 		accessor,
@@ -275,16 +275,18 @@ function getObjectChildValue_default<RootObj extends object = any>(
 REACT_SIMPLE_MAPPING.DI.objectModel.getObjectChildValue = getObjectChildValue_default;
 
 // Does not create missing internal objects
-export function getObjectChildValue<RootObj extends object = any>(
+export function getObjectChildValue<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
 	options: GetObjectChildValueOptions = {}
-): GetObjectChildValueReturn {
-	return REACT_SIMPLE_MAPPING.DI.objectModel.getObjectChildValue(rootObj, fullQualifiedName, options, getObjectChildValue_default);
+): GetObjectChildValueReturn<ValueType | undefined> {
+	return REACT_SIMPLE_MAPPING.DI.objectModel.getObjectChildValue<ValueType>(
+		rootObj, fullQualifiedName, options, getObjectChildValue_default
+	);
 }
 
 // Creates missing hierarchy and sets the value in the leaf object
-function setObjectChildValue_default<RootObj extends object = any>(
+function setObjectChildValue_default<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
 	value: unknown,
@@ -312,12 +314,12 @@ export function setObjectChildValue<RootObj extends object = any>(
 	);
 }
 
-function deleteObjectChildMember_default<RootObj extends object = any>(
+function deleteObjectChildMember_default<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
 	options: DeleteObjectChildMemberOptions
-): DeleteObjectChildMemberReturn {
-	const accessor = getObjectChildMember(rootObj, fullQualifiedName, false, options);
+): DeleteObjectChildMemberReturn<ValueType | undefined> {
+	const accessor = getObjectChildMember<ValueType | undefined>(rootObj, fullQualifiedName, false, options);
 	const deleted = accessor?.getValue?.();
 
 	return {
@@ -329,12 +331,12 @@ function deleteObjectChildMember_default<RootObj extends object = any>(
 
 REACT_SIMPLE_MAPPING.DI.objectModel.deleteObjectChildMember = deleteObjectChildMember_default;
 
-export function deleteObjectChildMember<RootObj extends object = any>(
+export function deleteObjectChildMember<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
 	options: DeleteObjectChildMemberOptions = {}
-): DeleteObjectChildMemberReturn {
-	return REACT_SIMPLE_MAPPING.DI.objectModel.deleteObjectChildMember(
+): DeleteObjectChildMemberReturn<ValueType | undefined> {
+	return REACT_SIMPLE_MAPPING.DI.objectModel.deleteObjectChildMember<ValueType>(
 		rootObj, fullQualifiedName, options, deleteObjectChildMember_default
 	);
 }

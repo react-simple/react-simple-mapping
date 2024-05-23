@@ -18,10 +18,10 @@ export interface GetObjectChildValueOptions {
 	readonly getValue?: (parent: any, name: string, options: GetObjectChildValueOptions) => any;
 }
 
-export interface GetObjectChildValueReturn {
+export interface GetObjectChildValueReturn<ValueType = unknown> {
 	// if the parent object was found it's set, if the hierarchy is not complete it's undefined
 	accessor: GetObjectChildMemberReturn | undefined;
-	value: unknown;
+	value: ValueType;
 }
 
 export interface SetObjectChildValueOptions extends GetObjectChildValueOptions {
@@ -41,10 +41,10 @@ export interface DeleteObjectChildMemberOptions extends GetObjectChildValueOptio
 	readonly deleteMember?: (parent: any, name: string, options: DeleteObjectChildMemberOptions) => boolean;
 }
 
-export interface DeleteObjectChildMemberReturn {
+export interface DeleteObjectChildMemberReturn<ValueType = unknown> {
 	accessor: GetObjectChildMemberReturn | undefined; // the parent obj will be created if the hierarchy is not complete
 	success: boolean;
-	deleted: unknown;
+	deleted: ValueType;
 }
 
 export type GetObjectChildMemberOptions =

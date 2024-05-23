@@ -14,12 +14,12 @@ export interface ReactSimpleMappingDependencyInjection {
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getObjectChildMember"]
 		) => GetObjectChildMemberReturn<ValueType, RootObj> | undefined;
 
-		getObjectChildValue: <RootObj extends object = any>(
+		getObjectChildValue: <ValueType = unknown, RootObj extends object = any>(
 			rootObj: RootObj,
 			fullQualifiedName: ValueOrArray<string>,
 			options: GetObjectChildValueOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getObjectChildValue"]
-		) => GetObjectChildValueReturn;
+		) => GetObjectChildValueReturn<ValueType | undefined>;
 
 		setObjectChildValue: <RootObj extends object = any>(
 			rootObj: RootObj,
@@ -29,11 +29,11 @@ export interface ReactSimpleMappingDependencyInjection {
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["setObjectChildValue"]
 		) => SetObjectChildValueReturn;
 
-		deleteObjectChildMember: <RootObj extends object = any>(
+		deleteObjectChildMember: <ValueType = unknown, RootObj extends object = any>(
 			rootObj: RootObj,
 			fullQualifiedName: ValueOrArray<string>,
 			options: DeleteObjectChildMemberOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteObjectChildMember"]
-		) => DeleteObjectChildMemberReturn;
+		) => DeleteObjectChildMemberReturn<ValueType | undefined>;
 	};
 }
