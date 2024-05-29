@@ -68,7 +68,7 @@ function getObjectChildMember_default<ValueType = unknown, RootObj extends objec
 		};
 	}
 
-	let parents: ObjectWithFullQualifiedName[] = [{ obj, name: "", fullQualifiedName: "" }];
+	const parents: ObjectWithFullQualifiedName[] = [{ obj, name: "", fullQualifiedName: "" }];
 	let parentFullQualifiedName = "";
 
 	const getValue = options.getValue || ((t1, t2) => t1[t2]);
