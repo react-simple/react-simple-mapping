@@ -6,10 +6,10 @@ const stub: any = () => { };
 export const REACT_SIMPLE_MAPPING: ReactSimpleMapping = {
 	DI: {
 		objectModel: {
-			getObjectChildMember: stub,
-			getObjectChildValue: stub,
-			setObjectChildValue: stub,
-			deleteObjectChildMember: stub
+			getChildMember: stub,
+			getChildMemberValue: stub,
+			setChildMemberValue: stub,
+			deleteChildMember: stub
 		}
 	}
 };

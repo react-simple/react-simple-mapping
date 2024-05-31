@@ -1,39 +1,38 @@
 import { ValueOrArray } from "@react-simple/react-simple-util";
 import {
-	DeleteObjectChildMemberOptions, DeleteObjectChildMemberReturn, GetObjectChildMemberOptions, GetObjectChildMemberReturn,
-	GetObjectChildValueOptions, GetObjectChildValueReturn, SetObjectChildValueOptions, SetObjectChildValueReturn
+	DeleteChildMemberOptions, GetChildMemberOptions, ChildMemberInfo, GetChildMemberValueOptions, SetChildMemberValueOptions
 } from "objectModel/types";
 
 export interface ReactSimpleMappingDependencyInjection {
 	objectModel: {
-		getObjectChildMember: <ValueType = unknown, RootObj extends object = any>(
+		getChildMember: <ValueType = unknown, RootObj extends object = any>(
 			rootObj: RootObj,
 			fullQualifiedName: ValueOrArray<string>,
-			createMissingObjects: boolean,
-			options: GetObjectChildMemberOptions,
-			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getObjectChildMember"]
-		) => GetObjectChildMemberReturn<ValueType, RootObj> | undefined;
+			createMissingChildObjects: boolean,
+			options: GetChildMemberOptions,
+			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMember"]
+		) => ChildMemberInfo<ValueType, RootObj> | undefined;
 
-		getObjectChildValue: <ValueType = unknown, RootObj extends object = any>(
+		getChildMemberValue: <ValueType = unknown, RootObj extends object = any>(
 			rootObj: RootObj,
 			fullQualifiedName: ValueOrArray<string>,
-			options: GetObjectChildValueOptions,
-			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getObjectChildValue"]
-		) => GetObjectChildValueReturn<ValueType | undefined>;
+			options: GetChildMemberValueOptions,
+			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberValue"]
+		) => ValueType | undefined;
 
-		setObjectChildValue: <RootObj extends object = any>(
+		setChildMemberValue: <RootObj extends object = any>(
 			rootObj: RootObj,
 			fullQualifiedName: ValueOrArray<string>,
 			value: unknown,
-			options: SetObjectChildValueOptions,
-			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["setObjectChildValue"]
-		) => SetObjectChildValueReturn;
+			options: SetChildMemberValueOptions,
+			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["setChildMemberValue"]
+		) => boolean;
 
-		deleteObjectChildMember: <ValueType = unknown, RootObj extends object = any>(
+		deleteChildMember: <ValueType = unknown, RootObj extends object = any>(
 			rootObj: RootObj,
 			fullQualifiedName: ValueOrArray<string>,
-			options: DeleteObjectChildMemberOptions,
-			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteObjectChildMember"]
-		) => DeleteObjectChildMemberReturn<ValueType | undefined>;
+			options: DeleteChildMemberOptions,
+			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteChildMember"]
+		) => boolean;
 	};
 }

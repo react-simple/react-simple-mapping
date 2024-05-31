@@ -1,14 +1,14 @@
-import { ValueOrArray, arrayRemoveAt, getResolvedArray, isEmpty, stringAppend } from "@react-simple/react-simple-util";
+import { ValueOrArray, arrayRemoveAt, getResolvedArray, isEmpty, resolveEmpty, stringAppend } from "@react-simple/react-simple-util";
 import {
-	GetObjectChildValueOptions, GetObjectChildMemberReturn, ObjectWithFullQualifiedName, SetObjectChildValueOptions, GetObjectChildMemberOptions,
-	DeleteObjectChildMemberOptions, DeleteObjectChildMemberReturn, SetObjectChildValueReturn, GetObjectChildValueReturn
+	GetChildMemberValueOptions, ChildMemberInfo as ChildMemberInfos, ObjectWithFullQualifiedName, SetChildMemberValueOptions, GetChildMemberOptions,
+	DeleteChildMemberOptions
 } from "./types";
 import { REACT_SIMPLE_MAPPING } from "data";
 
-function getObjectChildMemberRootObjAndPath(
+function getChildMemberRootObjAndPath(
 	rootObj: object,
 	fullQualifiedName: ValueOrArray<string>,
-	options: GetObjectChildValueOptions
+	options: GetChildMemberValueOptions
 ): {
 	obj: any;
 	path?: string[];
@@ -43,15 +43,15 @@ function getObjectChildMemberRootObjAndPath(
 // Understands array indexes, for example: memberName1.memberName2[index].memberName3
 // Does not understand standalone indexes, for example: memberName1.memberName2.[index].memberName3
 // Returns the last object which has the member to be set or get. (Returned 'name' is the last part of 'path'.)
-// If createMissingObjects is 'true' will create the complete structure and return member info.
-// If createMissingObjects is 'false' and the structure is not complete, won't create missing object and will return undefined.
-function getObjectChildMember_default<ValueType = unknown, RootObj extends object = any>(
+// If createMissingChildObjects is 'true' will create the complete structure and return member info.
+// If createMissingChildObjects is 'false' and the structure is not complete, won't create missing object and will return undefined.
+function getChildMember_default<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
-	createMissingObjects: boolean,
-	options: GetObjectChildMemberOptions = {}
-): GetObjectChildMemberReturn<ValueType, RootObj> | undefined {
-	const prep = getObjectChildMemberRootObjAndPath(rootObj, fullQualifiedName, options);
+	createMissingChildObjects: boolean,
+	options: GetChildMemberOptions = {}
+): ChildMemberInfos<ValueType, RootObj> | undefined {
+	const prep = getChildMemberRootObjAndPath(rootObj, fullQualifiedName, options);
 	let obj = prep.obj;
 	const path = prep.path;
 
@@ -89,7 +89,7 @@ function getObjectChildMember_default<ValueType = unknown, RootObj extends objec
 			child = getValue(obj, memberName, options);
 
 			if (child === undefined || child === null) {
-				if (!createMissingObjects) {
+				if (!createMissingChildObjects) {
 					return undefined;
 				}
 
@@ -103,7 +103,7 @@ function getObjectChildMember_default<ValueType = unknown, RootObj extends objec
 			child = getValue(obj, index, options);
 
 			if (child === undefined || child === null) {
-				if (!createMissingObjects) {
+				if (!createMissingChildObjects) {
 					return undefined;
 				}
 
@@ -119,7 +119,7 @@ function getObjectChildMember_default<ValueType = unknown, RootObj extends objec
 			let array = getValue(obj, name, options);
 
 			if (array === undefined || array === null) {
-				if (!createMissingObjects) {
+				if (!createMissingChildObjects) {
 					return undefined;
 				}
 
@@ -130,7 +130,7 @@ function getObjectChildMember_default<ValueType = unknown, RootObj extends objec
 			child = getValue(array, index, options);
 
 			if (child === undefined || child === null) {
-				if (!createMissingObjects) {
+				if (!createMissingChildObjects) {
 					return undefined;
 				}
 
@@ -176,7 +176,7 @@ function getObjectChildMember_default<ValueType = unknown, RootObj extends objec
 		let array = getValue(obj, name, options);
 
 		if (array === undefined || array === null) {
-			if (!createMissingObjects) {
+			if (!createMissingChildObjects) {
 				return undefined;
 			}
 
@@ -241,102 +241,86 @@ function getObjectChildMember_default<ValueType = unknown, RootObj extends objec
 	}
 }
 
-REACT_SIMPLE_MAPPING.DI.objectModel.getObjectChildMember = getObjectChildMember_default;
+REACT_SIMPLE_MAPPING.DI.objectModel.getChildMember = getChildMember_default;
 
 // Returns  child member value by resolving the specified path of member names. Create subobjects if children is not found.
 // Understands array indexes, for example: memberName1.memberName2[index].memberName3
 // Does not understand standalone indexes, for example: memberName1.memberName2.[index].memberName3
 // Returns the last object which has the member to be set or get. (Returned 'name' is the last part of 'path'.)
-export function getObjectChildMember<ValueType = unknown, RootObj extends object = any>(
+export function getChildMember<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
-	createMissingObjects: boolean, 
-	options: GetObjectChildMemberOptions = {}
-): GetObjectChildMemberReturn<ValueType, RootObj> | undefined {
-	return REACT_SIMPLE_MAPPING.DI.objectModel.getObjectChildMember(
-		rootObj, fullQualifiedName, createMissingObjects, options, getObjectChildMember_default
+	createMissingChildObjects: boolean, 
+	options: GetChildMemberOptions = {}
+): ChildMemberInfos<ValueType, RootObj> | undefined {
+	return REACT_SIMPLE_MAPPING.DI.objectModel.getChildMember(
+		rootObj, fullQualifiedName, createMissingChildObjects, options, getChildMember_default
 	);
 }
 
 // Does not create missing internal objects
-function getObjectChildValue_default<ValueType = unknown, RootObj extends object = any>(
+function getChildMemberValue_default<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
-	options: GetObjectChildValueOptions
-): GetObjectChildValueReturn<ValueType | undefined> {
-	const accessor = getObjectChildMember<ValueType | undefined>(rootObj, fullQualifiedName, false, options);
-
-	return {
-		accessor,
-		value: accessor?.getValue?.()
-	};
+	options: GetChildMemberValueOptions
+): ValueType | undefined {
+	return getChildMember<ValueType | undefined>(rootObj, fullQualifiedName, false, options)?.getValue?.();
 }
 
-REACT_SIMPLE_MAPPING.DI.objectModel.getObjectChildValue = getObjectChildValue_default;
+REACT_SIMPLE_MAPPING.DI.objectModel.getChildMemberValue = getChildMemberValue_default;
 
 // Does not create missing internal objects
-export function getObjectChildValue<ValueType = unknown, RootObj extends object = any>(
+export function getChildMemberValue<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
-	options: GetObjectChildValueOptions = {}
-): GetObjectChildValueReturn<ValueType | undefined> {
-	return REACT_SIMPLE_MAPPING.DI.objectModel.getObjectChildValue<ValueType>(
-		rootObj, fullQualifiedName, options, getObjectChildValue_default
+	options: GetChildMemberValueOptions = {}
+): ValueType | undefined {
+	return REACT_SIMPLE_MAPPING.DI.objectModel.getChildMemberValue<ValueType>(
+		rootObj, fullQualifiedName, options, getChildMemberValue_default
 	);
 }
 
 // Creates missing hierarchy and sets the value in the leaf object
-function setObjectChildValue_default<ValueType = unknown, RootObj extends object = any>(
+function setChildMemberValue_default<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
 	value: unknown,
-	options: SetObjectChildValueOptions = {}
-): SetObjectChildValueReturn {
-	const accessor = getObjectChildMember(rootObj, fullQualifiedName, true, options)!;
-
-	return {
-		accessor,
-		success: accessor.setValue(value)
-	};
+	options: SetChildMemberValueOptions = {}
+): boolean {
+	return getChildMember(rootObj, fullQualifiedName, true, options)?.setValue?.(value) || false;
 }
 
-REACT_SIMPLE_MAPPING.DI.objectModel.setObjectChildValue = setObjectChildValue_default;
+REACT_SIMPLE_MAPPING.DI.objectModel.setChildMemberValue = setChildMemberValue_default;
 
 // Creates missing hierarchy and sets the value in the leaf object
-export function setObjectChildValue<RootObj extends object = any>(
+export function setChildMemberValue<RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
 	value: unknown,
-	options: SetObjectChildValueOptions = {}
-): SetObjectChildValueReturn {
-	return REACT_SIMPLE_MAPPING.DI.objectModel.setObjectChildValue(
-		rootObj, fullQualifiedName, value, options, setObjectChildValue_default
+	options: SetChildMemberValueOptions = {}
+): boolean {
+	return REACT_SIMPLE_MAPPING.DI.objectModel.setChildMemberValue(
+		rootObj, fullQualifiedName, value, options, setChildMemberValue_default
 	);
 }
 
-function deleteObjectChildMember_default<ValueType = unknown, RootObj extends object = any>(
+function deleteChildMember_default<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
-	options: DeleteObjectChildMemberOptions
-): DeleteObjectChildMemberReturn<ValueType | undefined> {
-	const accessor = getObjectChildMember<ValueType | undefined>(rootObj, fullQualifiedName, false, options);
-	const deleted = accessor?.getValue?.();
-
-	return {
-		accessor,
-		success: accessor?.deleteMember?.() || false,
-		deleted
-	};
+	options: DeleteChildMemberOptions
+): boolean {
+	// if object hierarchy is incomplete we return 'true'
+	return resolveEmpty(getChildMember<ValueType | undefined>(rootObj, fullQualifiedName, false, options)?.deleteMember?.(), true);
 }
 
-REACT_SIMPLE_MAPPING.DI.objectModel.deleteObjectChildMember = deleteObjectChildMember_default;
+REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember = deleteChildMember_default;
 
-export function deleteObjectChildMember<ValueType = unknown, RootObj extends object = any>(
+export function deleteChildMember<ValueType = unknown, RootObj extends object = any>(
 	rootObj: RootObj,
 	fullQualifiedName: ValueOrArray<string>,
-	options: DeleteObjectChildMemberOptions = {}
-): DeleteObjectChildMemberReturn<ValueType | undefined> {
-	return REACT_SIMPLE_MAPPING.DI.objectModel.deleteObjectChildMember<ValueType>(
-		rootObj, fullQualifiedName, options, deleteObjectChildMember_default
+	options: DeleteChildMemberOptions = {}
+): boolean {
+	return REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember<ValueType>(
+		rootObj, fullQualifiedName, options, deleteChildMember_default
 	);
 }

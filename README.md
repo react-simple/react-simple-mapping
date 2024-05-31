@@ -38,25 +38,25 @@ The custom callback will be called with all parameters and a callback to the def
 ## Object Model
 
 ### Types
-- **GetObjectChildMemberOptions&lt;*ValueType*&gt;**: Parameters for getting accessors for child members in object hierarchies 
+- **GetChildMemberOptions&lt;*ValueType*&gt;**: Parameters for getting accessors for child members in object hierarchies 
 by providing the full qualified name of the member in the object tree ("name.name[0].name" etc.) Named values (@*name*) and root (/) references are supported, also the hierarchical iteration can be customized by providing custom callbacks.
-- **GetObjectChildMemberReturn&lt;*ValueType, RootObj*&gt;, ObjectWithFullQualifiedName**: Return type for getting accessors for child members. Provides iteration details and **getValue(), setValue()** and **deleteMember()** accessors.
-- **GetObjectChildValueOptions, GetObjectChildValueReturn**: Parameter and return type for the getObjectChildValue() method. If the hierarchy is incomplete returns *undefined* and does not create missing hierarchy objects.
-- **SetObjectChildValueOptions, SetObjectChildValueReturn**: Parameter and return type for the setObjectChildValue() method. If the hierarchy is incomplete creates the missing hierarchy objects.
-- **DeleteObjectChildMemberOptions, DeleteObjectChildMemberReturn**: Parameter and return type for the **deleteObjectChildMember()** method.
+- **ChildMemberAccessors&lt;*ValueType, RootObj*&gt;, ObjectWithFullQualifiedName**: Return type for getting accessors for child members. Provides iteration details and **getValue(), setValue()** and **deleteMember()** accessors.
+- **GetChildMemberValueOptions**: Parameter type for the getChildMemberValue() method. If the hierarchy is incomplete returns *undefined* and does not create missing hierarchy objects.
+- **SetChildMemberValueOptions**: Parameter type for the setChildMemberValue() method. If the hierarchy is incomplete creates the missing hierarchy objects.
+- **DeleteChildMemberOptions, DeleteObjectChildMemberReturn**: Parameter and return type for the **deleteChildMember()** method.
 
 ### Functions
 
-- **getObjectChildMember(*rootObj, fullQualifiedName, options*)**: Returns accessors for a nested object member by parsing the provided full qualified name.
+- **getChildMember(*rootObj, fullQualifiedName, options*)**: Returns accessors for a nested object member by parsing the provided full qualified name.
   - Understands nested object (.), array ([*n*]), named (@*name*) or root object (/) references.
   - Returns the details of the member with all its parents from the object tree and also the **getValue(), setValue(*value*)** and **deleteMember()** callbacks to update the member.
   - In *options* custom **getValue(*parent, name, options*), setValue(*parent, name, value, options*), createObject(*parent, name, options*)** and **deleteMember(*parent, name, options*)** callbacks can be specified to navigate the object tree. 
   - By default nested objects are accessed using the **parent[*childName*]** format, but it can be overriden by specifying a custom **options.getValue()** callback to return **parent.childNodes[*childName*]** for example, depending on the object model traversed.
-- **getObjectChildValue(*rootObj, fullQualifiedName, options*)**: Returns the value of the specified nested member. If the hierarchy is incomplete returns *undefined* and  does not create missing hierarchy objects. Call the *getObjectChildMember*() method and accepts the same options.
-- **setObjectChildValue(*rootObj, fullQualifiedName, value, options*)**: Sets the value of the specified nested member. If the hierarchy is incomplete creates the missing hierarchy objects.
- Calls the *getObjectChildMember*() method and accepts the same options.
-- **deleteObjectChildMember(*rootObj, fullQualifiedName, options*)**: Removes the specified nested member. If the hierarchy is incomplete returns success. 
- Calls the *getObjectChildMember*() method and accepts the same options.
+- **getChildMemberValue(*rootObj, fullQualifiedName, options*)**: Returns the value of the specified nested member. If the hierarchy is incomplete returns *undefined* and  does not create missing hierarchy objects. Call the *getChildMember*() method and accepts the same options.
+- **setChildMemberValue(*rootObj, fullQualifiedName, value, options*)**: Sets the value of the specified nested member. If the hierarchy is incomplete creates the missing hierarchy objects.
+ Calls the *getChildMember*() method and accepts the same options.
+- **deleteChildMember(*rootObj, fullQualifiedName, options*)**: Removes the specified nested member. If the hierarchy is incomplete returns success. 
+ Calls the *getChildMember*() method and accepts the same options.
 
 # Links
 

@@ -4,7 +4,7 @@ export interface ObjectWithFullQualifiedName {
 	readonly fullQualifiedName: string; // name.name.name...
 }
 
-export interface GetObjectChildValueOptions {
+export interface GetChildMemberValueOptions {
 	readonly pathSeparator?: string; // used only if fullQualifiedName is string, not a string array; default is '.'
 
 	// if specified and fullQualifiedName starts with "/" then the evaluation will start at the root object, not the parameter object
@@ -15,43 +15,24 @@ export interface GetObjectChildValueOptions {
 
 	// by default parent[name] is used; these callbacks are used for all object iteration (not only for reading the value from the leaves)
 	// also called for arrays, when parent is array and name is index
-	readonly getValue?: (parent: any, name: string, options: GetObjectChildValueOptions) => any;
+	readonly getValue?: (parent: any, name: string, options: GetChildMemberValueOptions) => any;
 }
 
-export interface GetObjectChildValueReturn<ValueType = unknown> {
-	// if the parent object was found it's set, if the hierarchy is not complete it's undefined
-	accessor: GetObjectChildMemberReturn | undefined;
-	value: ValueType;
-}
-
-export interface SetObjectChildValueOptions extends GetObjectChildValueOptions {
+export interface SetChildMemberValueOptions extends GetChildMemberValueOptions {
 	// called not only for the value, but for creating missing internal objects
-	readonly setValue?: (parent: any, name: string, value: unknown, options: SetObjectChildValueOptions) => boolean;
+	readonly setValue?: (parent: any, name: string, value: unknown, options: SetChildMemberValueOptions) => boolean;
 
 	// called not only for the value, but for creating missing internal objects (arrays are created transparently)
-	readonly createObject?: (parent: any, name: string, options: SetObjectChildValueOptions) => object;
+	readonly createObject?: (parent: any, name: string, options: SetChildMemberValueOptions) => object;
 }
 
-export interface SetObjectChildValueReturn {
-	accessor: GetObjectChildMemberReturn; // the parent obj will be created if the hierarchy is not complete
-	success: boolean;
+export interface DeleteChildMemberOptions extends GetChildMemberValueOptions {
+	readonly deleteMember?: (parent: any, name: string, options: DeleteChildMemberOptions) => boolean;
 }
 
-export interface DeleteObjectChildMemberOptions extends GetObjectChildValueOptions {
-	readonly deleteMember?: (parent: any, name: string, options: DeleteObjectChildMemberOptions) => boolean;
-}
+export type GetChildMemberOptions = SetChildMemberValueOptions & DeleteChildMemberOptions;
 
-export interface DeleteObjectChildMemberReturn<ValueType = unknown> {
-	accessor: GetObjectChildMemberReturn | undefined; // the parent obj will be created if the hierarchy is not complete
-	success: boolean;
-	deleted: ValueType;
-}
-
-export type GetObjectChildMemberOptions =
-	& SetObjectChildValueOptions
-	& DeleteObjectChildMemberOptions;
-
-export interface GetObjectChildMemberReturn<ValueType = any, RootObj extends object = any> extends ObjectWithFullQualifiedName {
+export interface ChildMemberInfo<ValueType = any, RootObj extends object = any> extends ObjectWithFullQualifiedName {
 	readonly rootObj: RootObj;
 
 	// all parents of obj starting from rootObj (last element is direct parent of obj)

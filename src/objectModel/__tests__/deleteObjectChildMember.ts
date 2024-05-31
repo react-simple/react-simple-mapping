@@ -1,10 +1,10 @@
 import { deepCopyObject } from "@react-simple/react-simple-util";
-import { GetObjectChildValueOptions, deleteObjectChildMember } from "objectModel";
+import { GetChildMemberValueOptions, deleteChildMember } from "objectModel";
 import { CHILD_MEMBER_TESTOBJ } from "objectModel/test.data";
 
-it('deleteObjectChildMember.stringPath', () => {
+it('deleteChildMember.stringPath', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { success } = deleteObjectChildMember(copy, "a.b.c");
+	const success = deleteChildMember(copy, "a.b.c");
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -12,9 +12,9 @@ it('deleteObjectChildMember.stringPath', () => {
 	expect(copy.a.b.array?.[0]).toBe(11);
 });
 
-it('deleteObjectChildMember.array.stringPath[0]', () => {
+it('deleteChildMember.array.stringPath[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { success } = deleteObjectChildMember(copy, "a.b.array[0]");
+	const success = deleteChildMember(copy, "a.b.array[0]");
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBe(1);
@@ -22,9 +22,9 @@ it('deleteObjectChildMember.array.stringPath[0]', () => {
 	expect(copy.a.b.array[0]).toBe(12);
 });
 
-it('deleteObjectChildMember.array.stringPath.[0]', () => {
+it('deleteChildMember.array.stringPath.[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { success } = deleteObjectChildMember(copy, "a.b.array.[0]");
+	const success = deleteChildMember(copy, "a.b.array.[0]");
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBe(1);
@@ -32,9 +32,9 @@ it('deleteObjectChildMember.array.stringPath.[0]', () => {
 	expect(copy.a.b.array[0]).toBe(12);
 });
 
-it('deleteObjectChildMember.stringPath.customSeparator', () => {
+it('deleteChildMember.stringPath.customSeparator', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { success } = deleteObjectChildMember(copy, "a/b/c", { pathSeparator: "/" });
+	const success = deleteChildMember(copy, "a/b/c", { pathSeparator: "/" });
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -42,10 +42,10 @@ it('deleteObjectChildMember.stringPath.customSeparator', () => {
 	expect(copy.a.b.array?.[0]).toBe(11);
 });
 
-it('deleteObjectChildMember.stringPath.rootObj', () => {
+it('deleteChildMember.stringPath.rootObj', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const options = { rootObj: copy };
-	const { success } = deleteObjectChildMember(copy, "/a.b.c", options);
+	const success = deleteChildMember(copy, "/a.b.c", options);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -53,13 +53,13 @@ it('deleteObjectChildMember.stringPath.rootObj', () => {
 	expect(copy.a.b.array?.[0]).toBe(11);
 });
 
-it('deleteObjectChildMember.stringPath.namedObjs', () => {
+it('deleteChildMember.stringPath.namedObjs', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const options: GetObjectChildValueOptions = {
+	const options: GetChildMemberValueOptions = {
 		getNamedObj: name => name === "bbb" ? copy.a.b : undefined
 	};
 
-	const { success } = deleteObjectChildMember(copy, "@bbb.c", options);
+	const success = deleteChildMember(copy, "@bbb.c", options);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -67,10 +67,10 @@ it('deleteObjectChildMember.stringPath.namedObjs', () => {
 	expect(copy.a.b.array?.[0]).toBe(11);
 });
 
-it('deleteObjectChildMember.custom.deleteMemberValue', () => {
+it('deleteChildMember.custom.deleteMemberValue', () => {
 	const data = { a_: { b_: { c_: 1 } } };
 
-	const { success } = deleteObjectChildMember(data, "a.b.c", {
+	const success = deleteChildMember(data, "a.b.c", {
 		getValue: (parent, name) => parent[`${name}_`],
 		deleteMember: (parent, name) => { delete parent[`${name}_`]; return true; }
 	});
