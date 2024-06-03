@@ -6,7 +6,7 @@ This documentation is for version 0.5.1.
 Features:
 - Supports **manipulating child members in object hierarchies** using full qualified paths supporting nested objects (.), arrays ([*n*]), named references (@*name*) and root references (/).
 - **Dependency injection** for pluggable architecture. All the important methods can be replaced with custom implementation by setting REACT_SIMPLE_MAPPING.DI members.
-- **Unit tests** for all features
+- See **Unit tests** for samples for all features
 
 # Usage
 

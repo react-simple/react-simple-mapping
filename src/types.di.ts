@@ -4,6 +4,15 @@ import {
 } from "objectModel/types";
 
 export interface ReactSimpleMappingDependencyInjection {
+	helpers: {
+		fullQualifiedMemberNameMatchSubTree: (
+			parentPath: string,
+			childPath: string,
+			bidirectional: boolean,
+			defaultImpl: ReactSimpleMappingDependencyInjection["helpers"]["fullQualifiedMemberNameMatchSubTree"]
+		) => boolean;
+	};
+
 	objectModel: {
 		getChildMember: <ValueType = unknown, RootObj extends object = any>(
 			rootObj: RootObj,
