@@ -1,7 +1,6 @@
 # React Simple! Object Mapping Library
-Basic utility functions for React application development. 
-
-This documentation is for version 0.5.1.
+Object mapping functions for React application development. Currently supports reading and writing child members of an object by using 
+**full qualified child names** like "name1.name2.name3[0].name4". This documentation is for version **0.6.4**.
 
 Features:
 - Supports **manipulating child members in object hierarchies** using full qualified paths supporting nested objects (.), arrays ([*n*]), named references (@*name*) and root references (/).
@@ -29,9 +28,9 @@ Members in the REACT_SIMPLE_MAPPING object can be set to update the behavior of 
 
 ### REACT_SIMPLE_MAPPING.DI
 
-Dependency injection references which will be called by the appropriate methods. For example **getChildObjectMember()** will 
-call **REACT_SIMPLE_MAPPING.DI.objectMapping.getChildObjectMember()**, so it can be easily replaced with a custom implementation. 
-The custom callback will be called with all parameters and a callback to the default implementation (**getChildObjectMember_default()**) to make implementing wrappers easier.
+Dependency injection references which will be called by the appropriate methods. For example **getChildMember()** will 
+call **REACT_SIMPLE_MAPPING.DI.objectMapping.getChildMember()**, so it can be easily replaced with a custom implementation. 
+The custom callback will be called with all parameters and a callback to the default implementation (**getChildMember_default()**) to make implementing wrappers easier.
 
 # Content
 
@@ -40,10 +39,10 @@ The custom callback will be called with all parameters and a callback to the def
 ### Types
 - **GetChildMemberOptions&lt;*ValueType*&gt;**: Parameters for getting accessors for child members in object hierarchies 
 by providing the full qualified name of the member in the object tree ("name.name[0].name" etc.) Named values (@*name*) and root (/) references are supported, also the hierarchical iteration can be customized by providing custom callbacks.
-- **ChildMemberAccessors&lt;*ValueType, RootObj*&gt;, ObjectWithFullQualifiedName**: Return type for getting accessors for child members. Provides iteration details and **getValue(), setValue()** and **deleteMember()** accessors.
+- **ChildMemberInfo&lt;*ValueType, RootObj*&gt;, ObjectWithFullQualifiedName**: Return type for getting accessors for child members. Provides iteration details and **getValue(), setValue()** and **deleteMember()** accessors.
 - **GetChildMemberValueOptions**: Parameter type for the getChildMemberValue() method. If the hierarchy is incomplete returns *undefined* and does not create missing hierarchy objects.
 - **SetChildMemberValueOptions**: Parameter type for the setChildMemberValue() method. If the hierarchy is incomplete creates the missing hierarchy objects.
-- **DeleteChildMemberOptions, DeleteObjectChildMemberReturn**: Parameter and return type for the **deleteChildMember()** method.
+- **DeleteChildMemberOptions**: Parameter and return type for the **deleteChildMember()** method.
 
 ### Functions
 

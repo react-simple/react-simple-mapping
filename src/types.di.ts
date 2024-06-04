@@ -5,11 +5,11 @@ import {
 
 export interface ReactSimpleMappingDependencyInjection {
 	helpers: {
-		fullQualifiedMemberNameMatchSubTree: (
+		isFullQualifiedMemberNameParentChild: (
 			parentPath: string,
 			childPath: string,
 			bidirectional: boolean,
-			defaultImpl: ReactSimpleMappingDependencyInjection["helpers"]["fullQualifiedMemberNameMatchSubTree"]
+			defaultImpl: ReactSimpleMappingDependencyInjection["helpers"]["isFullQualifiedMemberNameParentChild"]
 		) => boolean;
 	};
 

@@ -6,7 +6,7 @@ const stub: any = () => { };
 export const REACT_SIMPLE_MAPPING: ReactSimpleMapping = {
 	DI: {
 		helpers: {
-			fullQualifiedMemberNameMatchSubTree: stub
+			isFullQualifiedMemberNameParentChild: stub
 		},
 		
 		objectModel: {
