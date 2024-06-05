@@ -71,11 +71,30 @@ it('deleteChildMember.custom.deleteMemberValue', () => {
 	const data = { a_: { b_: { c_: 1 } } };
 
 	const success = deleteChildMember(data, "a.b.c", {
-		getValue: (parent, name) => parent[`${name}_`],
-		deleteMember: (parent, name) => { delete parent[`${name}_`]; return true; }
+		getValue: (parent, name) => parent.obj[`${name}_`],
+		deleteMember: (parent, name) => { delete parent.obj[`${name}_`]; return true; }
 	});
 
 	expect(success).toBe(true);
 	expect(data.a_.b_.c_).toBeUndefined();
 	expect(data.a_.b_).toBeDefined();
+});
+
+it('deleteChildMember.stringPath.deleteEmptyParents', () => {
+	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
+	let success = deleteChildMember(copy, "a.b.array", { deleteEmptyParents: true }); // should not remove "a" and "a.b"
+
+	expect(success).toBe(true);
+	expect(copy.a?.b?.array).toBeUndefined();
+	expect(copy.a?.b?.c).toBeDefined();
+	expect(copy.a?.b).toBeDefined();
+	expect(copy.a).toBeDefined();
+
+	success = deleteChildMember(copy, "a.b.c", { deleteEmptyParents: true }); // should remove "a" and "a.b" since "a.b" became empty
+	console.log(JSON.stringify(copy, null, 2));
+	expect(success).toBe(true);
+	expect(copy.a?.b?.array).toBeUndefined();
+	expect(copy.a?.b?.c).toBeUndefined();
+	expect(copy.a?.b).toBeUndefined();
+	expect(copy.a).toBeUndefined();
 });

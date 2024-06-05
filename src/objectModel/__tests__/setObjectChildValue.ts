@@ -107,8 +107,8 @@ it('setChildMemberValue.custom.setMemberValue', () => {
 	const data = { a_: { b_: { c_: 1 } } };
 
 	const success = setChildMemberValue(data, "a.b.c", 2, {
-		getValue: (parent, name) => parent[`${name}_`],
-		setValue: (parent, name, value) => { parent[`${name}_`] = value; return true; }
+		getValue: (parent, name) => parent.obj[`${name}_`],
+		setValue: (parent, name, value) => { parent.obj[`${name}_`] = value; return true; }
 	});
 
 	expect(success).toBe(true);

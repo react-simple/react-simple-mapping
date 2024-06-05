@@ -10,10 +10,11 @@ export const REACT_SIMPLE_MAPPING: ReactSimpleMapping = {
 		},
 		
 		objectModel: {
-			getChildMember: stub,
+			getChildMemberInfo: stub,
 			getChildMemberValue: stub,
 			setChildMemberValue: stub,
-			deleteChildMember: stub
+			deleteChildMember: stub,
+			iterateChildMembers: stub
 		}
 	}
 };

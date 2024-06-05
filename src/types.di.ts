@@ -1,6 +1,7 @@
 import { ValueOrArray } from "@react-simple/react-simple-util";
 import {
-	DeleteChildMemberOptions, GetChildMemberOptions, ChildMemberInfo, GetChildMemberValueOptions, SetChildMemberValueOptions
+	DeleteChildMemberOptionsExt, GetChildMemberInfoOptions, GetChildMemberValueOptions, SetChildMemberValueOptions, ChildMemberInfoWithCallbacks,
+	IterateChildMemberOptions
 } from "objectModel/types";
 
 export interface ReactSimpleMappingDependencyInjection {
@@ -14,34 +15,41 @@ export interface ReactSimpleMappingDependencyInjection {
 	};
 
 	objectModel: {
-		getChildMember: <ValueType = unknown, RootObj extends object = any>(
+		getChildMemberInfo: <ValueType = unknown, InvariantObj = any, RootObj = any>(
 			rootObj: RootObj,
 			fullQualifiedName: ValueOrArray<string>,
 			createMissingChildObjects: boolean,
-			options: GetChildMemberOptions,
-			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMember"]
-		) => ChildMemberInfo<ValueType, RootObj> | undefined;
+			options: GetChildMemberInfoOptions<InvariantObj>,
+			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberInfo"]
+		) => ChildMemberInfoWithCallbacks<ValueType, RootObj> | undefined;
 
-		getChildMemberValue: <ValueType = unknown, RootObj extends object = any>(
-			rootObj: RootObj,
+		getChildMemberValue: <ValueType = unknown, InvariantObj = any>(
+			rootObj: object,
 			fullQualifiedName: ValueOrArray<string>,
-			options: GetChildMemberValueOptions,
+			options: GetChildMemberValueOptions<InvariantObj>,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberValue"]
 		) => ValueType | undefined;
 
-		setChildMemberValue: <RootObj extends object = any>(
-			rootObj: RootObj,
+		setChildMemberValue: <InvariantObj = any>(
+			rootObj: object,
 			fullQualifiedName: ValueOrArray<string>,
 			value: unknown,
-			options: SetChildMemberValueOptions,
+			options: SetChildMemberValueOptions<InvariantObj>,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["setChildMemberValue"]
 		) => boolean;
 
-		deleteChildMember: <ValueType = unknown, RootObj extends object = any>(
-			rootObj: RootObj,
+		deleteChildMember: <InvariantObj = any>(
+			rootObj: object,
 			fullQualifiedName: ValueOrArray<string>,
-			options: DeleteChildMemberOptions,
+			options: DeleteChildMemberOptionsExt<InvariantObj>,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteChildMember"]
 		) => boolean;
+
+		iterateChildMembers: <InvariantObj = any>(
+			rootObj: object,
+			callback: (child: ChildMemberInfoWithCallbacks<InvariantObj>) => void,
+			options: IterateChildMemberOptions<InvariantObj>,
+			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["iterateChildMembers"]
+		) => void;
 	};
-}
+};

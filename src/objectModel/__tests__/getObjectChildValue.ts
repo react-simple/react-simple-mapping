@@ -62,6 +62,6 @@ it('getChildMemberValue.custom.getMemberValue', () => {
 	const data = { a_: { b_: { c_: 1 } } };
 
 	expect(getChildMemberValue(data, "a.b.c", {
-		getValue: (parent, name) => parent[`${name}_`]
+		getValue: (parent, name) => parent.obj[`${name}_`]
 	})).toBe(1);
 });

@@ -1,8 +1,8 @@
-import { GetChildMemberValueOptions, getChildMember } from "objectModel";
+import { GetChildMemberValueOptions, getChildMemberInfo } from "objectModel";
 import { CHILD_MEMBER_TESTOBJ } from "objectModel/test.data";
 
 it('getChildMember.getValue.arrayPath', () => {
-	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMember(CHILD_MEMBER_TESTOBJ, ["a", "b", "c"], false) || {};
+	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMemberInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "c"], false) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(name).toBe("c");
@@ -13,7 +13,7 @@ it('getChildMember.getValue.arrayPath', () => {
 });
 
 it('getChildMember.getValue.stringPath', () => {
-	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMember(CHILD_MEMBER_TESTOBJ, "a.b.c", false) || {};
+	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "a.b.c", false) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(name).toBe("c");
@@ -24,13 +24,13 @@ it('getChildMember.getValue.stringPath', () => {
 });
 
 it('getChildMember.getValue.stringPath.nonExistent', () => {
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ, "a.b.c2", false)?.getValue?.()).toBeUndefined();
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ, "a.b2.c", false)?.getValue?.()).toBeUndefined();
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ, "a2.b.c", false)?.getValue?.()).toBeUndefined();
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "a.b.c2", false)?.getValue?.()).toBeUndefined();
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "a.b2.c", false)?.getValue?.()).toBeUndefined();
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "a2.b.c", false)?.getValue?.()).toBeUndefined();
 });
 
 it('getChildMember.getValue.array.arrayPath[0]', () => {
-	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMember(CHILD_MEMBER_TESTOBJ, ["a", "b", "array[0]"], false) || {};
+	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMemberInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array[0]"], false) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(name).toBe("array");
@@ -42,7 +42,7 @@ it('getChildMember.getValue.array.arrayPath[0]', () => {
 });
 
 it('getChildMemberValue.array.arrayPath.[0]', () => {
-	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMember(CHILD_MEMBER_TESTOBJ, ["a", "b", "array.[0]"], false) || {};
+	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMemberInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array.[0]"], false) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(name).toBe("array");
@@ -54,7 +54,7 @@ it('getChildMemberValue.array.arrayPath.[0]', () => {
 });
 
 it('getChildMember.getValue.array.arrayPath/[0]', () => {
-	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMember(CHILD_MEMBER_TESTOBJ, ["a", "b", "array", "[0]"], false) || {};
+	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMemberInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array", "[0]"], false) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(name).toBe("array");
@@ -66,7 +66,7 @@ it('getChildMember.getValue.array.arrayPath/[0]', () => {
 });
 
 it('getChildMember.getValue.array.stringPath[0]', () => {
-	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMember(CHILD_MEMBER_TESTOBJ, "a.b.array[0]", false) || {};
+	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "a.b.array[0]", false) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(name).toBe("array");
@@ -78,7 +78,7 @@ it('getChildMember.getValue.array.stringPath[0]', () => {
 });
 
 it('getChildMember.getValue.array.stringPath.[0]', () => {
-	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMember(CHILD_MEMBER_TESTOBJ, "a.b.array.[0]", false) || {};
+	const { obj, name, fullQualifiedName, parents, arraySpec, getValue } = getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "a.b.array.[0]", false) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(name).toBe("array");
@@ -90,15 +90,15 @@ it('getChildMember.getValue.array.stringPath.[0]', () => {
 });
 
 it('getChildMemberValue.stringPath.customSeparator', () => {
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ, "a/b/c", false, { pathSeparator: "/" })?.getValue?.()).toBe(1);
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "a/b/c", false, { pathSeparator: "/" })?.getValue?.()).toBe(1);
 });
 
 it('getChildMember.getValue.stringPath.rootObj', () => {
 	const options = { rootObj: CHILD_MEMBER_TESTOBJ };
 
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ.a.b, "a.b.c", false, options)?.getValue?.()).toBe(undefined);
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ.a.b, "a./a.b.c", false, options)?.getValue?.()).toBe(undefined);
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ.a.b, "/a.b.c", false, options)?.getValue?.()).toBe(1);
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ.a.b, "a.b.c", false, options)?.getValue?.()).toBe(undefined);
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ.a.b, "a./a.b.c", false, options)?.getValue?.()).toBe(undefined);
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ.a.b, "/a.b.c", false, options)?.getValue?.()).toBe(1);
 });
 
 it('getChildMember.getValue.stringPath.namedObjs', () => {
@@ -106,16 +106,16 @@ it('getChildMember.getValue.stringPath.namedObjs', () => {
 		getNamedObj: name => name === "bbb" ? CHILD_MEMBER_TESTOBJ.a.b : undefined
 	};
 
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ, "@b.c", false, options)?.getValue?.()).toBe(undefined);
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ, "@bb.c", false, options)?.getValue?.()).toBe(undefined);
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ, "a.@bbb.c", false, options)?.getValue?.()).toBe(undefined);
-	expect(getChildMember(CHILD_MEMBER_TESTOBJ, "@bbb.c", false, options)?.getValue?.()).toBe(1);
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "@b.c", false, options)?.getValue?.()).toBe(undefined);
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "@bb.c", false, options)?.getValue?.()).toBe(undefined);
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "a.@bbb.c", false, options)?.getValue?.()).toBe(undefined);
+	expect(getChildMemberInfo(CHILD_MEMBER_TESTOBJ, "@bbb.c", false, options)?.getValue?.()).toBe(1);
 });
 
 it('getChildMember.getValue.custom.getMemberValue', () => {
 	const data = { a_: { b_: { c_: 1 } } };
 
-	expect(getChildMember(data, "a.b.c", false, {
-		getValue: (parent, name) => parent[`${name}_`]
+	expect(getChildMemberInfo(data, "a.b.c", false, {
+		getValue: (parent, name) => parent.obj[`${name}_`]
 	})?.getValue?.()).toBe(1);
 });
