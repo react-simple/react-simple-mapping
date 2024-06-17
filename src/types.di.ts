@@ -15,41 +15,41 @@ export interface ReactSimpleMappingDependencyInjection {
 	};
 
 	objectModel: {
-		getChildMemberInfo: <ValueType = unknown, InvariantObj = any, RootObj = any>(
-			rootObj: RootObj,
+		getChildMemberInfo: <TValueType, InvariantObj>(
+			startObj: object, // we do not want InvariantObj to automatically resolve to this
 			fullQualifiedName: ValueOrArray<string>,
 			createMissingChildObjects: boolean,
-			options: GetChildMemberInfoOptions<InvariantObj>,
+			options: GetChildMemberInfoOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberInfo"]
-		) => ChildMemberInfoWithCallbacks<ValueType, RootObj> | undefined;
+		) => ChildMemberInfoWithCallbacks<TValueType> | undefined;
 
-		getChildMemberValue: <ValueType = unknown, InvariantObj = any>(
-			rootObj: object,
+		getChildMemberValue: <TValueType = unknown>(
+			startObj: object, // we do not want InvariantObj to automatically resolve to this
 			fullQualifiedName: ValueOrArray<string>,
-			options: GetChildMemberValueOptions<InvariantObj>,
+			options: GetChildMemberValueOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberValue"]
-		) => ValueType | undefined;
+		) => TValueType | undefined;
 
-		setChildMemberValue: <InvariantObj = any>(
-			rootObj: object,
+		setChildMemberValue: <TValueType = unknown>(
+			startObj: object, // we do not want InvariantObj to automatically resolve to this
 			fullQualifiedName: ValueOrArray<string>,
-			value: unknown,
-			options: SetChildMemberValueOptions<InvariantObj>,
+			value: TValueType,
+			options: SetChildMemberValueOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["setChildMemberValue"]
 		) => boolean;
 
-		deleteChildMember: <InvariantObj = any>(
-			rootObj: object,
+		deleteChildMember: <TValueType = unknown>(
+			startObj: object, // we do not want InvariantObj to automatically resolve to this
 			fullQualifiedName: ValueOrArray<string>,
-			options: DeleteChildMemberOptionsExt<InvariantObj>,
+			options: DeleteChildMemberOptionsExt,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteChildMember"]
 		) => boolean;
 
-		iterateChildMembers: <InvariantObj = any>(
-			rootObj: object,
-			callback: (child: ChildMemberInfoWithCallbacks<InvariantObj>) => void,
-			options: IterateChildMemberOptions<InvariantObj>,
+		iterateChildMembers: <TValueType = unknown>(
+			startObj: object, // we do not want InvariantObj to automatically resolve to this
+			callback: (child: ChildMemberInfoWithCallbacks<TValueType>) => void,
+			options: IterateChildMemberOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["iterateChildMembers"]
 		) => void;
 	};
-};
+}

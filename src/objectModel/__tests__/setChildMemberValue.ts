@@ -107,8 +107,15 @@ it('setChildMemberValue.custom.setMemberValue', () => {
 	const data = { a_: { b_: { c_: 1 } } };
 
 	const success = setChildMemberValue(data, "a.b.c", 2, {
-		getValue: (parent, name) => parent.obj[`${name}_`],
-		setValue: (parent, name, value) => { parent.obj[`${name}_`] = value; return true; }
+		getMemberValue: (parent, name) => {
+			expect(name.fullQualifiedName).toBe(name.name === "a" ? "a" : name.name === "b" ? "a.b" : "a.b.c");
+			return (parent as any)[`${name.name}_`];
+		},
+		setMemberValue: (parent, name, value) => {
+			expect(name.fullQualifiedName).toBe(name.name === "a" ? "a" : name.name === "b" ? "a.b" : "a.b.c");
+			(parent as any)[`${name.name}_`] = value;
+			return true;
+		}
 	});
 
 	expect(success).toBe(true);

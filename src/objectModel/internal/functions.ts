@@ -1,29 +1,27 @@
 import { ValueOrArray, forEachReverse, getResolvedArray, isArray, isEmptyObject } from "@react-simple/react-simple-util";
-import { DeleteChildMemberOptions, DeleteChildMemberOptionsExt, GetChildMemberValueOptions, ObjectWithFullQualifiedName, SetChildMemberValueOptions
-  
- } from "objectModel/types";
+import { DeleteChildMemberOptions, DeleteChildMemberOptionsExt, GetChildMemberValueOptions, SetChildMemberValueOptions } from "objectModel/types";
 
 // these functions are not exported by the package
 
-export function getChildMemberRootObjAndPath<InvariantObj = any, RootObj = any>(
-  rootObj: RootObj,
+export function getChildMemberRootObjAndPath(
+  startObj: object,
   fullQualifiedName: ValueOrArray<string>,
-  options: GetChildMemberValueOptions<InvariantObj>
+  options: GetChildMemberValueOptions
 ): {
   obj: any;
   path?: string[];
 } {
-  if (!rootObj) {
-    return { obj: rootObj };
+  if (!startObj) {
+    return { obj: startObj };
   }
 
   const path = getResolvedArray(fullQualifiedName, t => t.split(options.pathSeparator || "."));
 
   if (!path.length) {
-    return { obj: rootObj };
+    return { obj: startObj, path };
   }
 
-  let obj: any = rootObj;
+  let obj: any = startObj;
 
   // check root obj
   if (path[0].startsWith("/")) {
@@ -40,72 +38,52 @@ export function getChildMemberRootObjAndPath<InvariantObj = any, RootObj = any>(
 }
 
 // specify InvariantObj if all the child objects have the same type
-export function getChildMemberInfoCallbacks<InvariantObj = any>(
+export function getChildMemberInfoCallbacks<InvariantObj extends object>(
   options:
-    | SetChildMemberValueOptions<InvariantObj>
-    | DeleteChildMemberOptions<InvariantObj>
-    | GetChildMemberValueOptions<InvariantObj>
+    | GetChildMemberValueOptions
+    | SetChildMemberValueOptions
+    | DeleteChildMemberOptionsExt
     = {}
-): {
-    getValue: (
-      parent: ObjectWithFullQualifiedName<InvariantObj>,
-      name: string | number,
-      options: GetChildMemberValueOptions<InvariantObj>
-    ) => any;
-  
-    setValue: (
-      parent: ObjectWithFullQualifiedName<InvariantObj>,
-      name: string | number,
-      value: unknown,
-      options: SetChildMemberValueOptions<InvariantObj>
-    ) => boolean;
-    
-    createObject: (
-      parent: ObjectWithFullQualifiedName<InvariantObj>,
-      name: string | number,
-      options: SetChildMemberValueOptions<InvariantObj>
-    ) => object;
-    
-    deleteMember: (
-      parent: ObjectWithFullQualifiedName<InvariantObj>,
-      name: string | number,
-      options: DeleteChildMemberOptionsExt<InvariantObj>
-    ) => boolean;
-} {
+): Required<
+  & Pick<GetChildMemberValueOptions, "getMemberValue">
+  & Pick<SetChildMemberValueOptions, "setMemberValue">
+  & Pick<SetChildMemberValueOptions, "createMember">
+  & Pick<DeleteChildMemberOptionsExt, "deleteMember">
+> {
   return {
-    getValue: options.getValue || ((parent, name) => (parent as any)[name]),
+    getMemberValue: options.getMemberValue || ((parent, names) => (parent as any)[names.name]),
 
-    setValue: (options as SetChildMemberValueOptions<InvariantObj>).setValue || (
-      (parent, name, value) => {
-        (parent as any)[name] = value;
+    setMemberValue: (options as SetChildMemberValueOptions).setMemberValue || (
+      (parent, names, value) => {
+        (parent as any)[names.name] = value;
         return true;
       }
     ),
-    
-    createObject: (options as SetChildMemberValueOptions<InvariantObj>).createObject || (() => ({})),
+
+    createMember: (options as SetChildMemberValueOptions).createMember || (() => ({} as InvariantObj)),
 
     // delete specified member and if requested delete all empty parents recursively
-    deleteMember: (parent, name, opt) => {
-      const deleteLocal = (options as DeleteChildMemberOptions<InvariantObj>).deleteMember || (
+    deleteMember: (parent, names, opt) => {
+      const deleteLocal = (options as DeleteChildMemberOptions).deleteMember || (
         (tparent, tname) => {
-          delete (tparent as any)[tname];
+          delete (tparent as any)[tname.name];
           return true;
         });
       
-      const canDeleteObject = (opt as DeleteChildMemberOptionsExt<InvariantObj>).canDeleteObject || (() => true);
-      let result = deleteLocal(parent, name, opt);
+      const canDeleteObject = opt.canDeleteObject || (() => true);
+      let result = deleteLocal(parent, names, opt);
 
       if (opt.deleteEmptyParents && opt.parents) {
         let obj = parent;
 
         forEachReverse(opt.parents, objParent => {
           // if the child object became empty but it's in an array we won't remove it
-          if (!isArray(obj) && isEmptyObject(obj) && canDeleteObject(objParent, name, opt)) {
-            result = deleteLocal(objParent.obj, name, opt) || result;
+          if (!isArray(obj) && isEmptyObject(obj) && canDeleteObject(objParent.obj, names, opt)) {
+            result = deleteLocal(objParent.obj, names, opt) || result;
           }
 
           obj = objParent.obj;
-          name = objParent.name;
+          names = objParent.names;
         });
       }
 

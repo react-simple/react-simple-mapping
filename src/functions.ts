@@ -1,4 +1,6 @@
+import { isString } from "@react-simple/react-simple-util";
 import { REACT_SIMPLE_MAPPING } from "data";
+import { FullQualifiedName } from "objectModel/types";
 
 // childPath must lie below parentPath (for example, parentPath: details.addresses, childPath: details.addresses[0].city)
 // Empty parentPath is considered to be the root path. (It does not understand any prefixes like "/".)
@@ -17,3 +19,18 @@ REACT_SIMPLE_MAPPING.DI.helpers.isFullQualifiedMemberNameParentChild = isFullQua
 export const isFullQualifiedMemberNameParentChild = (parentPath: string, childPath: string, bidirectional = false) => {  
   return REACT_SIMPLE_MAPPING.DI.helpers.isFullQualifiedMemberNameParentChild(parentPath, childPath, bidirectional, isFullQualifiedMemberNameParentChild_default);
 };
+
+export function splitFullQualifiedName(
+  fullQualifiedName: string | FullQualifiedName,
+  options?: {
+    splitArrayMemberNameAndIndexer?: boolean; // returns [..., "array[0]", ...] or [..., "array", "[0]", ...]
+  }
+): string[] {
+  if (isString(fullQualifiedName)) {
+    return options?.splitArrayMemberNameAndIndexer
+      ? fullQualifiedName.replace("[", ".[").split(".")
+      : fullQualifiedName.split(".");
+  } else {
+    return splitFullQualifiedName(fullQualifiedName.fullQualifiedName, options);
+  }
+}

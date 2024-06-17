@@ -1,11 +1,11 @@
 import { sameArrays, sameDictionaries } from "@react-simple/react-simple-util";
-import { iterateChildMembers } from "objectModel/functions";
+import { iterateChildMembers } from "objectModel/iterateChildMembers";
 import { CHILD_MEMBER_TESTOBJ } from "objectModel/test.data";
 
 it("iterateChildMembers", () => {
 	const members: string[] = [];
 
-	iterateChildMembers(CHILD_MEMBER_TESTOBJ, t => members.push(t.fullQualifiedName));
+	iterateChildMembers(CHILD_MEMBER_TESTOBJ, t => members.push(t.names.fullQualifiedName));
 	
 	expect(sameArrays(members, ["a", "a.b", "a.b.c", "a.b.array", "a.b.array[0]", "a.b.array[1]"])).toBe(true);
 });
@@ -15,7 +15,7 @@ it("iterateChildMembers.getValue", () => {
 
 	iterateChildMembers(
 		CHILD_MEMBER_TESTOBJ,
-		({ fullQualifiedName, getValue }) => membersAndValues[fullQualifiedName] = getValue()
+		({ names, getValue }) => membersAndValues[names.fullQualifiedName] = getValue()
 	);
 
 	expect(sameDictionaries(

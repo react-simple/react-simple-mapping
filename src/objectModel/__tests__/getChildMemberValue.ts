@@ -62,6 +62,9 @@ it('getChildMemberValue.custom.getMemberValue', () => {
 	const data = { a_: { b_: { c_: 1 } } };
 
 	expect(getChildMemberValue(data, "a.b.c", {
-		getValue: (parent, name) => parent.obj[`${name}_`]
+		getMemberValue: (parent, name) => {
+			expect(name.fullQualifiedName).toBe(name.name === "a" ? "a" : name.name === "b" ? "a.b" : "a.b.c");
+			return (parent as any)[`${name.name}_`];
+		}
 	})).toBe(1);
 });
