@@ -1,7 +1,7 @@
 import { ValueOrArray } from "@react-simple/react-simple-util";
 import {
 	DeleteChildMemberOptions, GetChildMemberInfoOptions, GetChildMemberValueOptions, SetChildMemberValueOptions, ChildMemberInfoWithCallbacks,
-	IterateChildMemberOptions
+	IterateChildMemberOptions, ChildMemberReadOnlyInfoWithCallbacks, GetChildMemberReadOnlyInfoOptions
 } from "objectModel/types";
 
 export interface ReactSimpleMappingDependencyInjection {
@@ -15,23 +15,30 @@ export interface ReactSimpleMappingDependencyInjection {
 	};
 
 	objectModel: {
-		getChildMemberInfo: <TValueType, InvariantObj>(
-			startObj: object, // we do not want InvariantObj to automatically resolve to this
+		getChildMemberInfo: <TValueType>(
+			startObj: object,
 			fullQualifiedName: ValueOrArray<string>,
 			createMissingChildObjects: boolean,
 			options: GetChildMemberInfoOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberInfo"]
 		) => ChildMemberInfoWithCallbacks<TValueType> | undefined;
 
+		getChildMemberReadOnlyInfo: <TValueType>(
+			startObj: object,
+			fullQualifiedName: ValueOrArray<string>,
+			options: GetChildMemberReadOnlyInfoOptions,
+			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberReadOnlyInfo"]
+		) => ChildMemberReadOnlyInfoWithCallbacks<TValueType> | undefined;
+
 		getChildMemberValue: <TValueType = unknown>(
-			startObj: object, // we do not want InvariantObj to automatically resolve to this
+			startObj: object,
 			fullQualifiedName: ValueOrArray<string>,
 			options: GetChildMemberValueOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberValue"]
 		) => TValueType | undefined;
 
 		setChildMemberValue: <TValueType = unknown>(
-			startObj: object, // we do not want InvariantObj to automatically resolve to this
+			startObj: object,
 			fullQualifiedName: ValueOrArray<string>,
 			value: TValueType,
 			options: SetChildMemberValueOptions,
@@ -39,14 +46,15 @@ export interface ReactSimpleMappingDependencyInjection {
 		) => boolean;
 
 		deleteChildMember: <TValueType = unknown>(
-			startObj: object, // we do not want InvariantObj to automatically resolve to this
+			startObj: object,
 			fullQualifiedName: ValueOrArray<string>,
+			deleteEmptyParents: boolean,
 			options: DeleteChildMemberOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteChildMember"]
 		) => boolean;
 
 		iterateChildMembers: <TValueType = unknown>(
-			startObj: object, // we do not want InvariantObj to automatically resolve to this
+			startObj: object,
 			callback: (child: ChildMemberInfoWithCallbacks<TValueType>) => void,
 			options: IterateChildMemberOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["iterateChildMembers"]

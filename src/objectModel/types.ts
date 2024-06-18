@@ -8,7 +8,6 @@ export interface ObjectWithFullQualifiedName<Obj extends object = object> {
 	readonly names: FullQualifiedName;
 }
 
-// specify InvariantObj if all the child objects have the same type
 export interface ChildMemberInfo extends ObjectWithFullQualifiedName {
 
 	readonly startObj: object; // the startObj for the get/set child method call
@@ -24,19 +23,20 @@ export interface ChildMemberInfo extends ObjectWithFullQualifiedName {
 	};
 }
 
-export interface ChildMemberInfoWithCallbacks<TValueType = unknown> extends ChildMemberInfo {
-	
+export interface ChildMemberReadOnlyInfoWithCallbacks<TValueType = unknown> extends ChildMemberInfo {
 	// callbacks are not used for array items only for object members
 	// see getChildMemberInfoCallbacks() for default implementation
 	readonly getValue: () => TValueType | undefined;
-	readonly setValue: (value: TValueType) => boolean;
-	readonly deleteMember: () => boolean;
 }
 
-// specify InvariantObj if all the child objects have the same type
+export interface ChildMemberInfoWithCallbacks<TValueType = unknown> extends ChildMemberReadOnlyInfoWithCallbacks<TValueType> {
+	readonly setValue: (value: TValueType) => boolean;
+	readonly deleteMember: (deleteEmptyParents: boolean) => boolean;
+}
+
 export interface GetChildMemberValueOptions {
 	pathSeparator?: string; // used only if fullQualifiedName is string, not a string array; default is '.'
-	rootObj?: object; // the root obj for the "/" prefix; we do not want InvariantObj to automatically resolve to this
+	rootObj?: object; // the root obj for the "/" prefix
 
 	// if specified and fullQualifiedName starts with "@name" then the evaluation will start at the named object found here, not the parameter object
 	getNamedObj?: (name: string) => object | undefined;
@@ -50,7 +50,6 @@ export interface GetChildMemberValueOptions {
 	) => unknown;
 }
 
-// specify InvariantObj if all the child objects have the same type
 export interface SetChildMemberValueOptions extends GetChildMemberValueOptions {
 	// called not only for the value, but for creating missing internal objects
 	setMemberValue?: (
@@ -68,10 +67,7 @@ export interface SetChildMemberValueOptions extends GetChildMemberValueOptions {
 	) => object;
 }
 
-// specify InvariantObj if all the child objects have the same type
 export interface DeleteChildMemberOptions extends GetChildMemberValueOptions {
-	deleteEmptyParents?: boolean;
-
 	// custom callback is only responsible to delete the member from the given object
 	// recursive deletion of parent objects is handled by the caller deleteChildMember() function
 	deleteMember?: (
@@ -87,13 +83,13 @@ export interface DeleteChildMemberOptions extends GetChildMemberValueOptions {
 	) => boolean;
 }
 
-// specify InvariantObj if all the child objects have the same type
+export type GetChildMemberReadOnlyInfoOptions = GetChildMemberValueOptions;
+
 export type GetChildMemberInfoOptions =
-	& GetChildMemberValueOptions
+	& GetChildMemberReadOnlyInfoOptions
 	& SetChildMemberValueOptions
 	& DeleteChildMemberOptions;
 
-// specify InvariantObj if all the child objects have the same type
 export type IterateChildMemberOptions =
 	& Pick<GetChildMemberInfoOptions, "getMemberValue" | "setMemberValue" | "deleteMember">
 	& {

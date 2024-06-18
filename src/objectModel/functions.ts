@@ -2,21 +2,22 @@ import { ValueOrArray, resolveEmpty } from "@react-simple/react-simple-util";
 import { GetChildMemberValueOptions, SetChildMemberValueOptions, DeleteChildMemberOptions } from "./types";
 import { REACT_SIMPLE_MAPPING } from "data";
 import { getChildMemberInfo } from "./getChildMemberInfo";
+import { getChildMemberReadOnlyInfo } from "./getChildMemberReadOnlyInfo";
 
 // Does not create missing internal objects
 function getChildMemberValue_default<TValueType = unknown>(
-	startObj: object, // we do not want InvariantObj to automatically resolve to this
+	startObj: object,
 	fullQualifiedName: ValueOrArray<string>,
 	options: GetChildMemberValueOptions
 ): TValueType | undefined {
-	return getChildMemberInfo<TValueType>(startObj, fullQualifiedName, false, options)?.getValue?.();
+	return getChildMemberReadOnlyInfo<TValueType>(startObj, fullQualifiedName, options)?.getValue?.();
 }
 
 REACT_SIMPLE_MAPPING.DI.objectModel.getChildMemberValue = getChildMemberValue_default;
 
 // Does not create missing internal objects
 export function getChildMemberValue<TValueType = unknown>(
-	startObj: object, // we do not want InvariantObj to automatically resolve to this
+	startObj: object,
 	fullQualifiedName: ValueOrArray<string>,
 	options: GetChildMemberValueOptions = {}
 ): TValueType | undefined {
@@ -27,7 +28,7 @@ export function getChildMemberValue<TValueType = unknown>(
 
 // Creates missing hierarchy and sets the value in the leaf object
 function setChildMemberValue_default<TValueType = unknown>(
-	startObj: object, // we do not want InvariantObj to automatically resolve to this
+	startObj: object,
 	fullQualifiedName: ValueOrArray<string>,
 	value: TValueType,
 	options: SetChildMemberValueOptions
@@ -39,7 +40,7 @@ REACT_SIMPLE_MAPPING.DI.objectModel.setChildMemberValue = setChildMemberValue_de
 
 // Creates missing hierarchy and sets the value in the leaf object
 export function setChildMemberValue<TValueType = unknown>(
-	startObj: object, // we do not want InvariantObj to automatically resolve to this
+	startObj: object,
 	fullQualifiedName: ValueOrArray<string>,
 	value: TValueType,
 	options: SetChildMemberValueOptions = {}
@@ -50,22 +51,24 @@ export function setChildMemberValue<TValueType = unknown>(
 }
 
 function deleteChildMember_default<TValueType = unknown>(
-	startObj: object, // we do not want InvariantObj to automatically resolve to this
+	startObj: object,
 	fullQualifiedName: ValueOrArray<string>,
+	deleteEmptyParents: boolean,
 	options: DeleteChildMemberOptions
 ): boolean {
 	// if object hierarchy is incomplete we return 'true'
-	return resolveEmpty(getChildMemberInfo(startObj, fullQualifiedName, false, options)?.deleteMember?.(), true);
+	return resolveEmpty(getChildMemberInfo(startObj, fullQualifiedName, false, options)?.deleteMember?.(deleteEmptyParents), true);
 }
 
 REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember = deleteChildMember_default;
 
 export function deleteChildMember<TValueType = unknown>(
-	startObj: object, // we do not want InvariantObj to automatically resolve to this
+	startObj: object,
 	fullQualifiedName: ValueOrArray<string>,
+	deleteEmptyParents: boolean,
 	options: DeleteChildMemberOptions = {}
 ): boolean {
 	return REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember<TValueType>(
-		startObj, fullQualifiedName, options, deleteChildMember_default
+		startObj, fullQualifiedName, deleteEmptyParents, options, deleteChildMember_default
 	);
 }

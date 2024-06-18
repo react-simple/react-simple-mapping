@@ -1,11 +1,11 @@
-import { getNonEmptyValues, getResolvedObjectEntries, isArray, isValueType, recursiveIteration, stringAppend } from "@react-simple/react-simple-util";
+import { getNonEmptyValues, getResolvedObjectEntries, isArray, isValueType, recursiveIteration, resolveEmpty, stringAppend } from "@react-simple/react-simple-util";
 import { ChildMemberInfo, ObjectWithFullQualifiedName, ChildMemberInfoWithCallbacks, IterateChildMemberOptions, FullQualifiedName } from "./types";
 import { REACT_SIMPLE_MAPPING } from "data";
 import { getChildMemberInfoCallbacks } from "./internal/functions";
 
 // Iterates all child members which can be get, set and deleted. Returns callbacks to do so.
 function iterateChildMembers_default<TValueType = unknown>(
-	startObj: object, // we do not want InvariantObj to automatically resolve to this
+	startObj: object,
 	callback: (child: ChildMemberInfoWithCallbacks<TValueType>) => void,
 	options: IterateChildMemberOptions
 ) {
@@ -45,7 +45,7 @@ function iterateChildMembers_default<TValueType = unknown>(
 					parents,
 					getValue: () => getMemberValue(item.obj, names, options) as TValueType | undefined,
 					setValue: value => setMemberValue(item.obj, names, value, options),
-					deleteMember: () => deleteMember(item.obj, names, options, parents)
+					deleteMember: (deleteEmptyParents: boolean) => deleteMember(item.obj, names, options, parents, deleteEmptyParents)
 				});
 
 				return childValue && !isValueType(childValue)

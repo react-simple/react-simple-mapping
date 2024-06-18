@@ -4,7 +4,7 @@ import { CHILD_MEMBER_TESTOBJ } from "objectModel/test.data";
 
 it('deleteChildMember.stringPath', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const success = deleteChildMember(copy, "a.b.c");
+	const success = deleteChildMember(copy, "a.b.c", true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -14,7 +14,7 @@ it('deleteChildMember.stringPath', () => {
 
 it('deleteChildMember.array.stringPath[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const success = deleteChildMember(copy, "a.b.array[0]");
+	const success = deleteChildMember(copy, "a.b.array[0]", true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBe(1);
@@ -24,7 +24,7 @@ it('deleteChildMember.array.stringPath[0]', () => {
 
 it('deleteChildMember.array.stringPath.[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const success = deleteChildMember(copy, "a.b.array.[0]");
+	const success = deleteChildMember(copy, "a.b.array.[0]", true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBe(1);
@@ -34,7 +34,7 @@ it('deleteChildMember.array.stringPath.[0]', () => {
 
 it('deleteChildMember.stringPath.customSeparator', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const success = deleteChildMember(copy, "a/b/c", { pathSeparator: "/" });
+	const success = deleteChildMember(copy, "a/b/c", true, { pathSeparator: "/" });
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -45,7 +45,7 @@ it('deleteChildMember.stringPath.customSeparator', () => {
 it('deleteChildMember.stringPath.rootObj', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const options = { rootObj: copy };
-	const success = deleteChildMember(copy, "/a.b.c", options);
+	const success = deleteChildMember(copy, "/a.b.c", true, options);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -59,7 +59,7 @@ it('deleteChildMember.stringPath.namedObjs', () => {
 		getNamedObj: name => name === "bbb" ? copy.a.b : undefined
 	};
 
-	const success = deleteChildMember(copy, "@bbb.c", options);
+	const success = deleteChildMember(copy, "@bbb.c", true, options);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -70,7 +70,7 @@ it('deleteChildMember.stringPath.namedObjs', () => {
 it('deleteChildMember.custom.deleteMember', () => {
 	const data = { a_: { b_: { c_: 1 } } };
 
-	const success = deleteChildMember(data, "a.b.c", {
+	const success = deleteChildMember(data, "a.b.c", false, {
 		getMemberValue: (parent, name) => {
 			expect(name.fullQualifiedName).toBe(name.name==="a"?"a": name.name==="b"?"a.b":"a.b.c");
 			return (parent as any)[`${name.name}_`];
@@ -89,7 +89,7 @@ it('deleteChildMember.custom.deleteMember', () => {
 
 it('deleteChildMember.stringPath.deleteEmptyParents', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	let success = deleteChildMember(copy, "a.b.array", { deleteEmptyParents: true }); // should not remove "a" and "a.b"
+	let success = deleteChildMember(copy, "a.b.array", true); // should not remove "a" and "a.b"
 
 	expect(success).toBe(true);
 	expect(copy.a?.b?.array).toBeUndefined();
@@ -97,7 +97,7 @@ it('deleteChildMember.stringPath.deleteEmptyParents', () => {
 	expect(copy.a?.b).toBeDefined();
 	expect(copy.a).toBeDefined();
 
-	success = deleteChildMember(copy, "a.b.c", { deleteEmptyParents: true }); // should remove "a" and "a.b" since "a.b" became empty
+	success = deleteChildMember(copy, "a.b.c", true); // should remove "a" and "a.b" since "a.b" became empty
 	expect(success).toBe(true);
 	expect(copy.a?.b?.array).toBeUndefined();
 	expect(copy.a?.b?.c).toBeUndefined();

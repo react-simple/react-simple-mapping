@@ -11,6 +11,7 @@ export const REACT_SIMPLE_MAPPING: ReactSimpleMapping = {
 		
 		objectModel: {
 			getChildMemberInfo: stub,
+			getChildMemberReadOnlyInfo: stub,
 			getChildMemberValue: stub,
 			setChildMemberValue: stub,
 			deleteChildMember: stub,

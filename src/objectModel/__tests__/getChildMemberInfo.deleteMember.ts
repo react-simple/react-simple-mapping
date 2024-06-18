@@ -5,7 +5,7 @@ import { CHILD_MEMBER_TESTOBJ } from "objectModel/test.data";
 it('getChildMemberInfo.deleteChildMember.stringPath', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const accessor = getChildMemberInfo(copy, "a.b.c", false);
-	const success = accessor?.deleteMember();
+	const success = accessor?.deleteMember(true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -16,7 +16,7 @@ it('getChildMemberInfo.deleteChildMember.stringPath', () => {
 it('getChildMemberInfo.deleteChildMember.array.stringPath[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const accessor = getChildMemberInfo(copy, "a.b.array[0]", false);
-	const success = accessor?.deleteMember();
+	const success = accessor?.deleteMember(true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBe(1);
@@ -27,7 +27,7 @@ it('getChildMemberInfo.deleteChildMember.array.stringPath[0]', () => {
 it('getChildMemberInfo.deleteChildMember.array.stringPath.[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const accessor = getChildMemberInfo(copy, "a.b.array.[0]", false);
-	const success = accessor?.deleteMember();
+	const success = accessor?.deleteMember(true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBe(1);
@@ -38,7 +38,7 @@ it('getChildMemberInfo.deleteChildMember.array.stringPath.[0]', () => {
 it('getChildMemberInfo.deleteChildMember.stringPath.customSeparator', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const accessor = getChildMemberInfo(copy, "a/b/c", false, { pathSeparator: "/" });
-	const success = accessor?.deleteMember();
+	const success = accessor?.deleteMember(true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -50,7 +50,7 @@ it('getChildMemberInfo.deleteChildMember.stringPath.rootObj', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const options = { rootObj: copy };
 	const accessor = getChildMemberInfo(copy, "/a.b.c", false, options);
-	const success = accessor?.deleteMember();
+	const success = accessor?.deleteMember(true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -65,7 +65,7 @@ it('getChildMemberInfo.deleteChildMember.stringPath.namedObjs', () => {
 	};
 
 	const accessor = getChildMemberInfo(copy, "@bbb.c", false, options);
-	const success = accessor?.deleteMember();
+	const success = accessor?.deleteMember(true);
 
 	expect(success).toBe(true);
 	expect(copy.a.b.c).toBeUndefined();
@@ -87,7 +87,8 @@ it('getChildMemberInfo.deleteChildMember.custom.deleteMemberValue', () => {
 			return true;
 		}
 	});
-	const success = accessor?.deleteMember();
+	
+	const success = accessor?.deleteMember(false);
 
 	expect(success).toBe(true);
 	expect(data.a_.b_.c_).toBeUndefined();

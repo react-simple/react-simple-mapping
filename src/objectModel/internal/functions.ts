@@ -39,8 +39,7 @@ export function getChildMemberRootObjAndPath(
   return { obj, path };
 }
 
-// specify InvariantObj if all the child objects have the same type
-export function getChildMemberInfoCallbacks<InvariantObj extends object>(
+export function getChildMemberInfoCallbacks(
   options:
     | GetChildMemberValueOptions
     | SetChildMemberValueOptions
@@ -54,8 +53,9 @@ export function getChildMemberInfoCallbacks<InvariantObj extends object>(
     deleteMember?: (
       obj: object,
       names: FullQualifiedName,
-      options: DeleteChildMemberOptions,
-      parents: ObjectWithFullQualifiedName[]
+      options: DeleteChildMemberOptions,      
+      parents: ObjectWithFullQualifiedName[],
+      deleteEmptyParents: boolean
     ) => boolean;
   }
 > {
@@ -69,10 +69,10 @@ export function getChildMemberInfoCallbacks<InvariantObj extends object>(
       }
     ),
 
-    createMember: (options as SetChildMemberValueOptions).createMember || (() => ({} as InvariantObj)),
+    createMember: (options as SetChildMemberValueOptions).createMember || (() => ({})),
 
     // delete specified member and if requested delete all empty parents recursively
-    deleteMember: (parent, names, opt, parents) => {
+    deleteMember: (parent, names, opt, parents, deleteEmptyParents) => {
       const deleteLocal = (options as DeleteChildMemberOptions).deleteMember || (
         (tparent, tname) => {
           delete (tparent as any)[tname.name];
@@ -82,7 +82,7 @@ export function getChildMemberInfoCallbacks<InvariantObj extends object>(
       const canDeleteObject = opt.canDeleteMember || (() => true);
       let result = deleteLocal(parent, names, opt);
 
-      if (opt.deleteEmptyParents) {
+      if (deleteEmptyParents) {
         let obj = parent;
 
         forEachReverse(parents, objParent => {

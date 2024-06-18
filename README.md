@@ -30,9 +30,10 @@ import { ... } from "@react-simple/react-simple-mapping";
 - Iterate all child members recursively by calling **iterateChildMembers(*partner*, *childMemberInfo* => { ... })**
 
 # Configuration
+
 ## REACT_SIMPLE_MAPPING
 
-Members in the REACT_SIMPLE_MAPPING object can be set to update the behavior of the provided functions.
+Members in the **REACT_SIMPLE_MAPPING** object can be set to update the behavior of the provided functions.
 
 ### REACT_SIMPLE_MAPPING.DI
 
