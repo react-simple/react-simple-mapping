@@ -17,12 +17,10 @@ export interface ChildMemberInfo extends ObjectWithFullQualifiedName {
 	// all parents of obj starting from rootObj (last element is direct parent of obj)
 	readonly parents: ObjectWithFullQualifiedName[];
 
-	// if member is array
+	// if the parent member is an array and this member is an index
 	readonly arrayInfo?: {
-		readonly array: any[]; // == obj[name]
-		readonly name: string; // [0]
-		readonly fullQualifiedName: string; // name.name.name[0]
-		readonly index: string; // 0
+		readonly array: any[];
+		readonly index: string;
 	};
 }
 

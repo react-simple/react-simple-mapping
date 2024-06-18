@@ -50,12 +50,12 @@ function getChildMemberInfo_default<TValueType = unknown> (
 			fullQualifiedName: stringAppend(parentNames.fullQualifiedName, currentName, ".")
 		};
 
-		const i = currentName.endsWith("]") ? currentName.lastIndexOf("[") : -1;
+		const openingBrace = currentName.endsWith("]") ? currentName.lastIndexOf("[") : -1;
 
 		// iterate children with path[0..length - 2] values
 		let child: any;
 
-		if (i < 0) {
+		if (openingBrace < 0) {
 			// name only
 			child = getMemberValue(obj, names, options);
 
@@ -68,10 +68,16 @@ function getChildMemberInfo_default<TValueType = unknown> (
 				setMemberValue(obj, names, child, options); // create missing child
 			}
 		}
-		else if (i === 0) {
+		else if (openingBrace === 0) {
 			// [index] only
 			const index = currentName.substring(1, currentName.length - 1);
-			child = obj[index];
+			const arrayIndexNames: FullQualifiedName = {
+				name: index,
+				fullQualifiedName: names.fullQualifiedName
+			};
+
+			// child = obj[index];
+			child = getMemberValue(obj, arrayIndexNames, options);
 
 			if (child === undefined || child === null) {
 				if (!createMissingChildObjects) {
@@ -79,17 +85,19 @@ function getChildMemberInfo_default<TValueType = unknown> (
 				}
 
 				child = path[pathIndex + 1].startsWith("[") ? [] : createMember(obj, names, options);
-				obj[index] = child; // create missing item in array
+				// obj[index] = child; // create missing item in array
+				setMemberValue(obj, arrayIndexNames, child, options);
 			}
 		}
 		else {
 			// name[index], name.[index]
-			const name = currentName[i - 1] === "." ? currentName.substring(0, i - 1) : currentName.substring(0, i);
-			const index = currentName.substring(i + 1, currentName.length - 1);
+			const arrayName = currentName[openingBrace - 1] === "." ? currentName.substring(0, openingBrace - 1) : currentName.substring(0, openingBrace);
+			const arrayIndex = currentName.substring(openingBrace + 1, currentName.length - 1); // without braces
 
-			const arrayNames = {
-				name: currentName,
-				fullQualifiedName: stringAppend(parentNames.fullQualifiedName, currentName, ".")
+			// the name of the array member without the index
+			const arrayNames: FullQualifiedName = {
+				name: arrayName,
+				fullQualifiedName: stringAppend(parentNames.fullQualifiedName, arrayName, ".")
 			};
 
 			let array = getMemberValue(obj, arrayNames, options) as unknown[];
@@ -103,7 +111,14 @@ function getChildMemberInfo_default<TValueType = unknown> (
 				setMemberValue(obj, arrayNames, array, options); // create missing child
 			}
 
-			child = (array as any)[index];
+			// the name of the array index member
+			const arrayIndexNames: FullQualifiedName = {
+				name: arrayIndex,
+				fullQualifiedName: `${arrayNames.fullQualifiedName}[${arrayIndex}]` // currentName might contain the dot
+			};
+
+			// child = (array as any)[index];
+			child = getMemberValue(array, arrayIndexNames, options);
 
 			if (child === undefined || child === null) {
 				if (!createMissingChildObjects) {
@@ -111,7 +126,8 @@ function getChildMemberInfo_default<TValueType = unknown> (
 				}
 
 				child = path[pathIndex + 1].startsWith("[") ? [] : createMember(obj, names, options);
-				(array as any)[index] = child; // create missing item in array
+				// (array as any)[index] = child; // create missing item in array
+				setMemberValue(array, arrayIndexNames, child, options);
 			}
 		}
 
@@ -122,10 +138,10 @@ function getChildMemberInfo_default<TValueType = unknown> (
 	}
 
 	const currentName = path[path.length - 1];
-	const i = currentName.endsWith("]") ? currentName.lastIndexOf("[") : -1;
+	const openingBrace = currentName.endsWith("]") ? currentName.lastIndexOf("[") : -1;
 	
 	// 2) return accessors to the last item in path
-	if (i < 0) {
+	if (openingBrace < 0) {
 		const names: FullQualifiedName = {
 			name: currentName,
 			fullQualifiedName: stringAppend(parentNames.fullQualifiedName, currentName, ".")
@@ -147,18 +163,25 @@ function getChildMemberInfo_default<TValueType = unknown> (
 			deleteMember: () => deleteMember(obj, names, options, parents)
 		};
 	}
-	else if (i > 0) {
+	else if (openingBrace > 0) {
 		// name[index], name.[index]
-		const currentMemberName = currentName[i - 1] === "." ? currentName.substring(0, i - 1) : currentName.substring(0, i);
-		const names: FullQualifiedName = {
-			name: currentMemberName,
-			fullQualifiedName: stringAppend(parentNames.fullQualifiedName, currentMemberName, ".")
+		const arrayName = currentName[openingBrace - 1] === "." ? currentName.substring(0, openingBrace - 1) : currentName.substring(0, openingBrace);
+		const arrayIndex = currentName.substring(openingBrace + 1, currentName.length - 1); // without braces
+		const arrayIndexValue = parseFloat(arrayIndex);
+
+		// the name of the array member without the index
+		const arrayNames: FullQualifiedName = {
+			name: arrayName,
+			fullQualifiedName: stringAppend(parentNames.fullQualifiedName, arrayName, ".")
 		};
 
-		const index = currentName.substring(i + 1, currentName.length - 1);
-		const indexNum = parseFloat(index);
+		// the name of the array index member
+		const arrayIndexNames: FullQualifiedName = {
+			name: arrayIndex,
+			fullQualifiedName: `${arrayNames.fullQualifiedName}[${arrayIndex}]` // currentName might contain the dot
+		};
 
-		let array = getMemberValue(obj, names, options);
+		let array = getMemberValue(obj, arrayNames, options);
 
 		if (array === undefined || array === null) {
 			if (!createMissingChildObjects) {
@@ -166,74 +189,82 @@ function getChildMemberInfo_default<TValueType = unknown> (
 			}
 
 			array = [];
-			setMemberValue(obj, names, array, options);
+			setMemberValue(obj, arrayNames, array, options);
 		}
 
 		return {
 			startObj,
 			rootObj,
-			obj,
-			names,
-			parents,
-			arrayInfo: isArray(array)
-				? {
-					array,
-					index,
-					name: `[${index}]`,
-					fullQualifiedName: names.fullQualifiedName
-				} :
-				undefined,
+			obj: array as object,
+			names: arrayIndexNames,
+			parents: [
+				...parents,
+				{ obj, names: arrayNames }
+			],
+			arrayInfo: isArray(array) ? { array, index: arrayIndex } : undefined,
 			// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
-			getValue: () => (array as any)[index] as TValueType | undefined,
+			getValue: () => {
+				// return (array as any)[index] as TValueType | undefined;
+				return getMemberValue(array as object, arrayIndexNames, options) as TValueType | undefined;
+			},
 			setValue: value => {
-				(array as any)[index] = value;
+				// (array as any)[index] = value;
+				setMemberValue(array as object, arrayIndexNames, value, options);
 				return true;
 			},
-			deleteMember: isArray(array) && !isEmpty(indexNum) 
+			deleteMember: isArray(array) && !isEmpty(arrayIndexValue)
 				? () => {
-					const newArray = arrayRemoveAt(array, indexNum);
-					return setMemberValue(obj, names, newArray, options);
+					const newArray = arrayRemoveAt(array, arrayIndexValue);
+					return setMemberValue(obj, arrayNames, newArray, options);
 				}
 				: () => {
-					delete (array as any)[index];
+					delete (array as any)[arrayIndex];
 					return true;
 				}
 		};
 	}
 	else {
 		// [index] only
-		const index = currentName.substring(1, currentName.length - 1);
-		const indexNum = parseFloat(index);
-		const parentObj = parents[parents.length - 2]; // can be undefined
-		const parentArray = parents[parents.length - 1];
-		const names = parentArray.names;
+		const arrayIndex = currentName.substring(1, currentName.length - 1);
+		const arrayIndexValue = parseFloat(arrayIndex)
+
+		const parent = parents[parents.length - 1];
+		const array = parent.obj as any[];
+		
+		const names: FullQualifiedName = {
+			name: arrayIndex,
+			fullQualifiedName: `${parentNames.fullQualifiedName}[${arrayIndex}]` // eliminate the dot
+		};
 
 		return {
 			startObj,
 			rootObj,
-			obj: parentObj?.obj || obj,
+			obj: array,
 			names,
-			parents: parents.slice(0, -1),
-			arrayInfo: {
-				array: obj,
-				index,
-				name: currentName,
-				fullQualifiedName: stringAppend(parentNames.fullQualifiedName, currentName, ".")
-			},
+			parents,
+			arrayInfo: { array, index: arrayIndex },
 			// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
-			getValue: () => obj[index],
+			getValue: () => {
+				// return obj[arrayIndex];
+				return getMemberValue(array, names, options) as TValueType | undefined;
+			},
 			setValue: value => {
-				obj[index] = value;
+				// obj[index] = value;
+				setMemberValue(array, names, value, options);
 				return true;
 			},
-			deleteMember: !isEmpty(indexNum)
+			deleteMember: !isEmpty(arrayIndexValue)
 				// set the new array instance in the parent obj
 				? () => {
-					const newArray = arrayRemoveAt(obj, indexNum);
-					return setMemberValue(parentObj.obj, names, newArray, options);
+					const newArray = arrayRemoveAt(array, arrayIndexValue);
+
+					return (
+						!!parents[parents.length - 2] &&
+						setMemberValue(parents[parents.length - 2].obj, parentNames, newArray, options)
+					);
 				}
 				: () => {
-					delete obj[index];
+					delete array[arrayIndexValue];
 					return true;
 				}
 		};
