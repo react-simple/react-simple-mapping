@@ -1,5 +1,5 @@
 import { ValueOrArray, resolveEmpty } from "@react-simple/react-simple-util";
-import { GetChildMemberValueOptions, SetChildMemberValueOptions, DeleteChildMemberOptionsExt } from "./types";
+import { GetChildMemberValueOptions, SetChildMemberValueOptions, DeleteChildMemberOptions } from "./types";
 import { REACT_SIMPLE_MAPPING } from "data";
 import { getChildMemberInfo } from "./getChildMemberInfo";
 
@@ -52,7 +52,7 @@ export function setChildMemberValue<TValueType = unknown>(
 function deleteChildMember_default<TValueType = unknown>(
 	startObj: object, // we do not want InvariantObj to automatically resolve to this
 	fullQualifiedName: ValueOrArray<string>,
-	options: DeleteChildMemberOptionsExt
+	options: DeleteChildMemberOptions
 ): boolean {
 	// if object hierarchy is incomplete we return 'true'
 	return resolveEmpty(getChildMemberInfo(startObj, fullQualifiedName, false, options)?.deleteMember?.(), true);
@@ -63,7 +63,7 @@ REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember = deleteChildMember_defaul
 export function deleteChildMember<TValueType = unknown>(
 	startObj: object, // we do not want InvariantObj to automatically resolve to this
 	fullQualifiedName: ValueOrArray<string>,
-	options: DeleteChildMemberOptionsExt = {}
+	options: DeleteChildMemberOptions = {}
 ): boolean {
 	return REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember<TValueType>(
 		startObj, fullQualifiedName, options, deleteChildMember_default

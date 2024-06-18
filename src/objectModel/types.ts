@@ -72,6 +72,8 @@ export interface SetChildMemberValueOptions extends GetChildMemberValueOptions {
 
 // specify InvariantObj if all the child objects have the same type
 export interface DeleteChildMemberOptions extends GetChildMemberValueOptions {
+	deleteEmptyParents?: boolean;
+
 	// custom callback is only responsible to delete the member from the given object
 	// recursive deletion of parent objects is handled by the caller deleteChildMember() function
 	deleteMember?: (
@@ -79,25 +81,11 @@ export interface DeleteChildMemberOptions extends GetChildMemberValueOptions {
 		names: FullQualifiedName,
 		options: DeleteChildMemberOptions
 	) => boolean;
-}
 
-// specify InvariantObj if all the child objects have the same type
-export interface DeleteChildMemberOptionsExt extends GetChildMemberValueOptions {	
-	deleteEmptyParents?: boolean;
-	parents?: ObjectWithFullQualifiedName[];
-	
-	// custom callback is only responsible to delete the member from the given object
-	// recursive deletion of parent objects is handled by the caller deleteChildMember() function
-	deleteMember?: (
+	canDeleteMember?: (
 		obj: object,
 		names: FullQualifiedName,
-		options: DeleteChildMemberOptionsExt
-	) => boolean;
-
-	canDeleteObject?: (
-		obj: object,
-		names: FullQualifiedName,
-		options: DeleteChildMemberOptionsExt
+		options: DeleteChildMemberOptions
 	) => boolean;
 }
 

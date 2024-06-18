@@ -1,5 +1,7 @@
 import { ValueOrArray, forEachReverse, getResolvedArray, isArray, isEmptyObject } from "@react-simple/react-simple-util";
-import { DeleteChildMemberOptions, DeleteChildMemberOptionsExt, GetChildMemberValueOptions, SetChildMemberValueOptions } from "objectModel/types";
+import {
+  DeleteChildMemberOptions, FullQualifiedName, GetChildMemberValueOptions, ObjectWithFullQualifiedName, SetChildMemberValueOptions   
+} from "objectModel/types";
 
 // these functions are not exported by the package
 
@@ -42,13 +44,20 @@ export function getChildMemberInfoCallbacks<InvariantObj extends object>(
   options:
     | GetChildMemberValueOptions
     | SetChildMemberValueOptions
-    | DeleteChildMemberOptionsExt
+    | DeleteChildMemberOptions
     = {}
 ): Required<
   & Pick<GetChildMemberValueOptions, "getMemberValue">
   & Pick<SetChildMemberValueOptions, "setMemberValue">
   & Pick<SetChildMemberValueOptions, "createMember">
-  & Pick<DeleteChildMemberOptionsExt, "deleteMember">
+  & {
+    deleteMember?: (
+      obj: object,
+      names: FullQualifiedName,
+      options: DeleteChildMemberOptions,
+      parents: ObjectWithFullQualifiedName[]
+    ) => boolean;
+  }
 > {
   return {
     getMemberValue: options.getMemberValue || ((parent, names) => (parent as any)[names.name]),
@@ -63,20 +72,20 @@ export function getChildMemberInfoCallbacks<InvariantObj extends object>(
     createMember: (options as SetChildMemberValueOptions).createMember || (() => ({} as InvariantObj)),
 
     // delete specified member and if requested delete all empty parents recursively
-    deleteMember: (parent, names, opt) => {
+    deleteMember: (parent, names, opt, parents) => {
       const deleteLocal = (options as DeleteChildMemberOptions).deleteMember || (
         (tparent, tname) => {
           delete (tparent as any)[tname.name];
           return true;
         });
       
-      const canDeleteObject = opt.canDeleteObject || (() => true);
+      const canDeleteObject = opt.canDeleteMember || (() => true);
       let result = deleteLocal(parent, names, opt);
 
-      if (opt.deleteEmptyParents && opt.parents) {
+      if (opt.deleteEmptyParents) {
         let obj = parent;
 
-        forEachReverse(opt.parents, objParent => {
+        forEachReverse(parents, objParent => {
           // if the child object became empty but it's in an array we won't remove it
           if (!isArray(obj) && isEmptyObject(obj) && canDeleteObject(objParent.obj, names, opt)) {
             result = deleteLocal(objParent.obj, names, opt) || result;

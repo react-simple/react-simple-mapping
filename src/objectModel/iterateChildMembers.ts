@@ -45,7 +45,7 @@ function iterateChildMembers_default<TValueType = unknown>(
 					parents,
 					getValue: () => getMemberValue(item.obj, names, options) as TValueType | undefined,
 					setValue: value => setMemberValue(item.obj, names, value, options),
-					deleteMember: () => deleteMember(item.obj, names, options)
+					deleteMember: () => deleteMember(item.obj, names, options, parents)
 				});
 
 				return childValue && !isValueType(childValue)

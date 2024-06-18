@@ -38,7 +38,7 @@ function getChildMemberInfo_default<TValueType = unknown> (
 	let parentNames: FullQualifiedName = { name: "", fullQualifiedName: "" };
 
 	// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
-	const { getMemberValue, setMemberValue, createMember, deleteMember: deleteChildMember } = getChildMemberInfoCallbacks(options);
+	const { getMemberValue, setMemberValue, createMember, deleteMember } = getChildMemberInfoCallbacks(options);
 
 	// 1) Iterate objects, except the last in path
 	// skip the last item
@@ -144,7 +144,7 @@ function getChildMemberInfo_default<TValueType = unknown> (
 			...info,
 			getValue: () => getMemberValue(obj, names, options) as TValueType | undefined,
 			setValue: (value: TValueType) => setMemberValue(obj, names, value, options),
-			deleteMember: () => deleteChildMember(obj, names, { ...options, parents })
+			deleteMember: () => deleteMember(obj, names, options, parents)
 		};
 	}
 	else if (i > 0) {

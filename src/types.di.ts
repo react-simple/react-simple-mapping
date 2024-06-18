@@ -1,6 +1,6 @@
 import { ValueOrArray } from "@react-simple/react-simple-util";
 import {
-	DeleteChildMemberOptionsExt, GetChildMemberInfoOptions, GetChildMemberValueOptions, SetChildMemberValueOptions, ChildMemberInfoWithCallbacks,
+	DeleteChildMemberOptions, GetChildMemberInfoOptions, GetChildMemberValueOptions, SetChildMemberValueOptions, ChildMemberInfoWithCallbacks,
 	IterateChildMemberOptions
 } from "objectModel/types";
 
@@ -41,7 +41,7 @@ export interface ReactSimpleMappingDependencyInjection {
 		deleteChildMember: <TValueType = unknown>(
 			startObj: object, // we do not want InvariantObj to automatically resolve to this
 			fullQualifiedName: ValueOrArray<string>,
-			options: DeleteChildMemberOptionsExt,
+			options: DeleteChildMemberOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteChildMember"]
 		) => boolean;
 

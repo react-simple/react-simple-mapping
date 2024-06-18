@@ -23,13 +23,16 @@ export const isFullQualifiedMemberNameParentChild = (parentPath: string, childPa
 export function splitFullQualifiedName(
   fullQualifiedName: string | FullQualifiedName,
   options?: {
-    splitArrayMemberNameAndIndexer?: boolean; // returns [..., "array[0]", ...] or [..., "array", "[0]", ...]
+    splitArrayIndexers?: boolean; // returns ["array[0]"] or ["array", "[0]"]
+    unwrapArrayIndexers?: boolean; // returns ["array", "[0]"] or ["array", "0"]
   }
 ): string[] {
   if (isString(fullQualifiedName)) {
-    return options?.splitArrayMemberNameAndIndexer
-      ? fullQualifiedName.replace("[", ".[").split(".")
-      : fullQualifiedName.split(".");
+    return (
+      options?.unwrapArrayIndexers ? fullQualifiedName.replaceAll("[", ".").replaceAll("]", "") :
+        options?.splitArrayIndexers ? fullQualifiedName.replace("[", ".[") :
+          fullQualifiedName
+    ).split(".");
   } else {
     return splitFullQualifiedName(fullQualifiedName.fullQualifiedName, options);
   }

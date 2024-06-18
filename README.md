@@ -21,12 +21,12 @@ npm run test
 ## Import
 import { ... } from "@react-simple/react-simple-mapping";
 
-## Prime Examples
+## Samples
 
 - Get the value of a child member by using **getChildMemberValue(*partner*, "partner.addresses[0].city")**
 - Set the value of a child member by using **setChildMemberValue(*partner*, "partner.addresses[0].city", "New-York")**
 - Delete a child member and all its empty parents by calling **deleteChildMember(*partner*, "partner.addresses[0]", true)**
-- Get accessors to manipulate a member later by calling **getChildMemberInfo(*partner*, "partner.addresses[0].city")** which will return the following **ChildMemberInfo** members: ***partners*[], *getValue*(), *setValue*(), *deleteMember*()**
+- Get accessors to manipulate a member later by calling **getChildMemberInfo(*partner*, "partner.addresses[0].city")** which will return the following **ChildMemberInfo** members: ***parents*[], *getValue*(), *setValue*(), *deleteMember*()**
 - Iterate all child members recursively by calling **iterateChildMembers(*partner*, *childMemberInfo* => { ... })**
 
 # Configuration
