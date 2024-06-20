@@ -32,8 +32,8 @@ function setChildMemberValue_default<TValueType = unknown>(
 	fullQualifiedName: ValueOrArray<string>,
 	value: TValueType,
 	options: SetChildMemberValueOptions
-): boolean {
-	return getChildMemberInfo(startObj, fullQualifiedName, true, options)?.setValue?.(value) || false;
+): void {
+	getChildMemberInfo(startObj, fullQualifiedName, true, options)?.setValue?.(value);
 }
 
 REACT_SIMPLE_MAPPING.DI.objectModel.setChildMemberValue = setChildMemberValue_default;
@@ -44,8 +44,8 @@ export function setChildMemberValue<TValueType = unknown>(
 	fullQualifiedName: ValueOrArray<string>,
 	value: TValueType,
 	options: SetChildMemberValueOptions = {}
-): boolean {
-	return REACT_SIMPLE_MAPPING.DI.objectModel.setChildMemberValue(
+): void {
+	REACT_SIMPLE_MAPPING.DI.objectModel.setChildMemberValue(
 		startObj, fullQualifiedName, value, options, setChildMemberValue_default
 	);
 }
@@ -55,9 +55,9 @@ function deleteChildMember_default<TValueType = unknown>(
 	fullQualifiedName: ValueOrArray<string>,
 	deleteEmptyParents: boolean,
 	options: DeleteChildMemberOptions
-): boolean {
+): void {
 	// if object hierarchy is incomplete we return 'true'
-	return resolveEmpty(getChildMemberInfo(startObj, fullQualifiedName, false, options)?.deleteMember?.(deleteEmptyParents), true);
+	resolveEmpty(getChildMemberInfo(startObj, fullQualifiedName, false, options)?.deleteMember?.(deleteEmptyParents), true);
 }
 
 REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember = deleteChildMember_default;
@@ -67,8 +67,8 @@ export function deleteChildMember<TValueType = unknown>(
 	fullQualifiedName: ValueOrArray<string>,
 	deleteEmptyParents: boolean,
 	options: DeleteChildMemberOptions = {}
-): boolean {
-	return REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember<TValueType>(
+): void {
+	REACT_SIMPLE_MAPPING.DI.objectModel.deleteChildMember<TValueType>(
 		startObj, fullQualifiedName, deleteEmptyParents, options, deleteChildMember_default
 	);
 }

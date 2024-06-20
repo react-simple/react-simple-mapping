@@ -56,7 +56,7 @@ export function getChildMemberInfoCallbacks(
       options: DeleteChildMemberOptions,      
       parents: ObjectWithFullQualifiedName[],
       deleteEmptyParents: boolean
-    ) => boolean;
+    ) => void;
   }
 > {
   return {
@@ -65,7 +65,6 @@ export function getChildMemberInfoCallbacks(
     setMemberValue: (options as SetChildMemberValueOptions).setMemberValue || (
       (parent, names, value) => {
         (parent as any)[names.name] = value;
-        return true;
       }
     ),
 
@@ -76,11 +75,10 @@ export function getChildMemberInfoCallbacks(
       const deleteLocal = (options as DeleteChildMemberOptions).deleteMember || (
         (tparent, tname) => {
           delete (tparent as any)[tname.name];
-          return true;
         });
       
       const canDeleteObject = opt.canDeleteMember || (() => true);
-      let result = deleteLocal(parent, names, opt);
+      deleteLocal(parent, names, opt);
 
       if (deleteEmptyParents) {
         let obj = parent;
@@ -88,15 +86,13 @@ export function getChildMemberInfoCallbacks(
         forEachReverse(parents, objParent => {
           // if the child object became empty but it's in an array we won't remove it
           if (!isArray(obj) && isEmptyObject(obj) && canDeleteObject(objParent.obj, names, opt)) {
-            result = deleteLocal(objParent.obj, names, opt) || result;
+            deleteLocal(objParent.obj, names, opt);
           }
 
           obj = objParent.obj;
           names = objParent.names;
         });
       }
-
-      return result;
     }
   };
 }

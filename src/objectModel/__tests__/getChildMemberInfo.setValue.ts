@@ -34,57 +34,57 @@ it('getChildMemberInfo.setValue.nonExistingMember.stringPath', () => {
 
 it('getChildMemberInfo.setValue.array.arrayPath[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { obj, arrayInfo, setValue } = getChildMemberInfo(copy, ["a", "b", "array[0]"], true) || {};
+	const { obj, parentArray, setValue } = getChildMemberInfo(copy, ["a", "b", "array[0]"], true) || {};
 	setValue?.(22);
 
 	expect(copy.a.b.array[0]).toBe(22);
 	expect((obj as any)?.[0]).toBe(22);
 	expect(obj).toBe(copy.a.b.array);
-	expect(arrayInfo?.array?.[0]).toBe(22);
+	expect(parentArray?.array?.[0]).toBe(22);
 });
 
 it('getChildMemberInfo.setValue.array.arrayPath.[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { obj, arrayInfo, setValue } = getChildMemberInfo(copy, ["a", "b", "array.[0]"], true) || {};
+	const { obj, parentArray, setValue } = getChildMemberInfo(copy, ["a", "b", "array.[0]"], true) || {};
 	setValue?.(22);
 
 	expect(copy.a.b.array[0]).toBe(22);
 	expect((obj as any)?.[0]).toBe(22);
 	expect(obj).toBe(copy.a.b.array);
-	expect(arrayInfo?.array?.[0]).toBe(22);
+	expect(parentArray?.array?.[0]).toBe(22);
 });
 
 it('getChildMemberInfo.setValue.array.arrayPath/[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { obj, arrayInfo, setValue } = getChildMemberInfo(copy, ["a", "b", "array", "[0]"], true) || {};
+	const { obj, parentArray, setValue } = getChildMemberInfo(copy, ["a", "b", "array", "[0]"], true) || {};
 	setValue?.(22);
 
 	expect(copy.a.b.array[0]).toBe(22);
 	expect((obj as any)?.[0]).toBe(22);
 	expect(obj).toBe(copy.a.b.array);
-	expect(arrayInfo?.array?.[0]).toBe(22);
+	expect(parentArray?.array?.[0]).toBe(22);
 });
 
 it('getChildMemberInfo.setValue.array.stringPath[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { obj, arrayInfo, setValue } = getChildMemberInfo(copy, "a.b.array[0]", true) || {};
+	const { obj, parentArray, setValue } = getChildMemberInfo(copy, "a.b.array[0]", true) || {};
 	setValue?.(22);
 
 	expect(copy.a.b.array[0]).toBe(22);
 	expect((obj as any)?.[0]).toBe(22);
 	expect(obj).toBe(copy.a.b.array);
-	expect(arrayInfo?.array?.[0]).toBe(22);
+	expect(parentArray?.array?.[0]).toBe(22);
 });
 
 it('getChildMemberInfo.setValue.array.stringPath.[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	const { obj, arrayInfo, setValue } = getChildMemberInfo(copy, "a.b.array.[0]", true) || {};
+	const { obj, parentArray, setValue } = getChildMemberInfo(copy, "a.b.array.[0]", true) || {};
 	setValue?.(22);
 
 	expect(copy.a.b.array[0]).toBe(22);
 	expect((obj as any)?.[0]).toBe(22);
 	expect(obj).toBe(copy.a.b.array);
-	expect(arrayInfo?.array?.[0]).toBe(22);
+	expect(parentArray?.array?.[0]).toBe(22);
 });
 
 it('getChildMemberInfo.setValue.nonExistingMember.array.stringPath', () => {

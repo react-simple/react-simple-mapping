@@ -43,7 +43,7 @@ export interface ReactSimpleMappingDependencyInjection {
 			value: TValueType,
 			options: SetChildMemberValueOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["setChildMemberValue"]
-		) => boolean;
+		) => void;
 
 		deleteChildMember: <TValueType = unknown>(
 			startObj: object,
@@ -51,7 +51,7 @@ export interface ReactSimpleMappingDependencyInjection {
 			deleteEmptyParents: boolean,
 			options: DeleteChildMemberOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteChildMember"]
-		) => boolean;
+		) => void;
 
 		iterateChildMembers: <TValueType = unknown>(
 			startObj: object,

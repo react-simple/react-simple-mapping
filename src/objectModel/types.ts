@@ -17,7 +17,7 @@ export interface ChildMemberInfo extends ObjectWithFullQualifiedName {
 	readonly parents: ObjectWithFullQualifiedName[];
 
 	// if the parent member is an array and this member is an index
-	readonly arrayInfo?: {
+	readonly parentArray?: {
 		readonly array: any[];
 		readonly index: string;
 	};
@@ -30,8 +30,8 @@ export interface ChildMemberReadOnlyInfoWithCallbacks<TValueType = unknown> exte
 }
 
 export interface ChildMemberInfoWithCallbacks<TValueType = unknown> extends ChildMemberReadOnlyInfoWithCallbacks<TValueType> {
-	readonly setValue: (value: TValueType) => boolean;
-	readonly deleteMember: (deleteEmptyParents: boolean) => boolean;
+	readonly setValue: (value: TValueType) => void;
+	readonly deleteMember: (deleteEmptyParents: boolean) => void;
 }
 
 export interface GetChildMemberValueOptions {
@@ -57,7 +57,7 @@ export interface SetChildMemberValueOptions extends GetChildMemberValueOptions {
 		names: FullQualifiedName,
 		value: unknown,
 		options: SetChildMemberValueOptions
-	) => boolean;
+	) => void;
 
 	// called not only for the value, but for creating missing internal objects (arrays are created transparently)
 	createMember?: (
@@ -74,7 +74,7 @@ export interface DeleteChildMemberOptions extends GetChildMemberValueOptions {
 		obj: object,
 		names: FullQualifiedName,
 		options: DeleteChildMemberOptions
-	) => boolean;
+	) => void;
 
 	canDeleteMember?: (
 		obj: object,

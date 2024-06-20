@@ -3,24 +3,24 @@ import { GetChildMemberValueOptions, getChildMemberReadOnlyInfo } from "objectMo
 import { CHILD_MEMBER_TESTOBJ } from "objectModel/test.data";
 
 it('getChildMemberReadOnlyInfo.getValue.arrayPath', () => {
-	const { obj, names, parents, arrayInfo, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "c"]) || {};
+	const { obj, names, parents, parentArray, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "c"]) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(names?.name).toBe("c");
 	expect(names?.fullQualifiedName).toBe("a.b.c");
 	expect(parents?.length).toBe(3);
-	expect(arrayInfo).toBeUndefined();
+	expect(parentArray).toBeUndefined();
 	expect(getValue?.()).toBe(1);
 });
 
 it('getChildMemberReadOnlyInfo.getValue.stringPath', () => {
-	const { obj, names, parents, arrayInfo, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, "a.b.c") || {};
+	const { obj, names, parents, parentArray, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, "a.b.c") || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b);
 	expect(names?.name).toBe("c");
 	expect(names?.fullQualifiedName).toBe("a.b.c");
 	expect(parents?.length).toBe(3);
-	expect(arrayInfo).toBeUndefined();
+	expect(parentArray).toBeUndefined();
 	expect(getValue?.()).toBe(1);
 });
 
@@ -31,62 +31,62 @@ it('getChildMemberReadOnlyInfo.getValue.stringPath.nonExistent', () => {
 });
 
 it('getChildMemberReadOnlyInfo.getValue.array.arrayPath[0]', () => {
-	const { obj, names, parents, arrayInfo, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array[0]"]) || {};
+	const { obj, names, parents, parentArray, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array[0]"]) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
 	expect(names?.name).toBe("0");
 	expect(names?.fullQualifiedName).toBe("a.b.array[0]");
 	expect(parents?.length).toBe(4);
-	expect(arrayInfo?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
-	expect(arrayInfo?.index).toBe("0");
+	expect(parentArray?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
+	expect(parentArray?.index).toBe("0");
 	expect(getValue?.()).toBe(11);
 });
 
 it('getChildMemberValue.array.arrayPath.[0]', () => {
-	const { obj, names, parents, arrayInfo, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array.[0]"]) || {};
+	const { obj, names, parents, parentArray, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array.[0]"]) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
 	expect(names?.name).toBe("0");
 	expect(names?.fullQualifiedName).toBe("a.b.array[0]");
 	expect(sameArrays((parents || []).map(t => t.names.fullQualifiedName), ["", "a", "a.b", "a.b.array"])).toBe(true);
-	expect(arrayInfo?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
-	expect(arrayInfo?.index).toBe("0");
+	expect(parentArray?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
+	expect(parentArray?.index).toBe("0");
 	expect(getValue?.()).toBe(11);
 });
 
 it('getChildMemberReadOnlyInfo.getValue.array.arrayPath/[0]', () => {
-	const { obj, names, parents, arrayInfo, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array", "[0]"]) || {};
+	const { obj, names, parents, parentArray, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, ["a", "b", "array", "[0]"]) || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
 	expect(names?.name).toBe("0");
 	expect(names?.fullQualifiedName).toBe("a.b.array[0]");
 	expect(sameArrays((parents || []).map(t => t.names.fullQualifiedName), ["", "a", "a.b", "a.b.array"])).toBe(true);
-	expect(arrayInfo?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
-	expect(arrayInfo?.index).toBe("0");
+	expect(parentArray?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
+	expect(parentArray?.index).toBe("0");
 	expect(getValue?.()).toBe(11);
 });
 
 it('getChildMemberReadOnlyInfo.getValue.array.stringPath[0]', () => {
-	const { obj, names, parents, arrayInfo, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, "a.b.array[0]") || {};
+	const { obj, names, parents, parentArray, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, "a.b.array[0]") || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
 	expect(names?.name).toBe("0");
 	expect(names?.fullQualifiedName).toBe("a.b.array[0]");
 	expect(sameArrays((parents || []).map(t => t.names.fullQualifiedName), ["", "a", "a.b", "a.b.array"])).toBe(true);
-	expect(arrayInfo?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
-	expect(arrayInfo?.index).toBe("0");
+	expect(parentArray?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
+	expect(parentArray?.index).toBe("0");
 	expect(getValue?.()).toBe(11);
 });
 
 it('getChildMemberReadOnlyInfo.getValue.array.stringPath.[0]', () => {
-	const { obj, names, parents, arrayInfo, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, "a.b.array.[0]") || {};
+	const { obj, names, parents, parentArray, getValue } = getChildMemberReadOnlyInfo(CHILD_MEMBER_TESTOBJ, "a.b.array.[0]") || {};
 
 	expect(obj).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
 	expect(names?.name).toBe("0");
 	expect(names?.fullQualifiedName).toBe("a.b.array[0]");
 	expect(sameArrays((parents || []).map(t => t.names.fullQualifiedName), ["", "a", "a.b", "a.b.array"])).toBe(true);
-	expect(arrayInfo?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
-	expect(arrayInfo?.index).toBe("0");
+	expect(parentArray?.array).toBe(CHILD_MEMBER_TESTOBJ.a.b.array);
+	expect(parentArray?.index).toBe("0");
 	expect(getValue?.()).toBe(11);
 });
 

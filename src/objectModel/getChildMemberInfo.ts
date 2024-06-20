@@ -201,7 +201,7 @@ function getChildMemberInfo_default<TValueType = unknown> (
 				...parents,
 				{ obj, names: arrayNames }
 			],
-			arrayInfo: isArray(array) ? { array, index: arrayIndex } : undefined,
+			parentArray: isArray(array) ? { array, index: arrayIndex } : undefined,
 			// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
 			getValue: () => {
 				// return (array as any)[index] as TValueType | undefined;
@@ -249,7 +249,7 @@ function getChildMemberInfo_default<TValueType = unknown> (
 			obj: array,
 			names,
 			parents,
-			arrayInfo: { array, index: arrayIndex },
+			parentArray: { array, index: arrayIndex },
 			// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
 			getValue: () => {
 				// return obj[arrayIndex];
