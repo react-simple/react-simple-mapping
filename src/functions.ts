@@ -27,13 +27,23 @@ export function splitFullQualifiedName(
     unwrapArrayIndexers?: boolean; // returns ["array", "[0]"] or ["array", "0"]
   }
 ): string[] {
-  if (isString(fullQualifiedName)) {
-    return (
-      options?.unwrapArrayIndexers ? fullQualifiedName.replaceAll("[", ".").replaceAll("]", "") :
-        options?.splitArrayIndexers ? fullQualifiedName.replace("[", ".[") :
-          fullQualifiedName
-    ).split(".");
-  } else {
-    return splitFullQualifiedName(fullQualifiedName.fullQualifiedName, options);
-  }
+  return (
+    !isString(fullQualifiedName) ? splitFullQualifiedName(fullQualifiedName.fullQualifiedName, options) :
+      !fullQualifiedName ? [] :
+        (
+          options?.unwrapArrayIndexers ? fullQualifiedName.replaceAll("[", ".").replaceAll("]", "") :
+            options?.splitArrayIndexers ? fullQualifiedName.replace("[", ".[") :
+              fullQualifiedName
+        ).split(".")
+  );
 }
+
+export const getNameFromFullQualifiedName = (fullQualifiedName: string) => {
+  if (!fullQualifiedName) {
+    return "";
+  }
+  else { 
+    const i = fullQualifiedName.lastIndexOf(".");
+    return i >= 0 ? fullQualifiedName.substring(i + 1) : fullQualifiedName;
+  }
+};

@@ -1,4 +1,3 @@
-import { ValueOrArray } from "@react-simple/react-simple-util";
 import {
 	DeleteChildMemberOptions, GetChildMemberInfoOptions, GetChildMemberValueOptions, SetChildMemberValueOptions, ChildMemberInfoWithCallbacks,
 	IterateChildMemberOptions, ChildMemberReadOnlyInfoWithCallbacks, GetChildMemberReadOnlyInfoOptions
@@ -15,47 +14,47 @@ export interface ReactSimpleMappingDependencyInjection {
 	};
 
 	objectModel: {
-		getChildMemberInfo: <TValueType>(
+		getChildMemberInfo: <Value>(
 			startObj: object,
-			fullQualifiedName: ValueOrArray<string>,
+			fullQualifiedName: string,
 			createMissingChildObjects: boolean,
 			options: GetChildMemberInfoOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberInfo"]
-		) => ChildMemberInfoWithCallbacks<TValueType> | undefined;
+		) => ChildMemberInfoWithCallbacks<Value> | undefined;
 
-		getChildMemberReadOnlyInfo: <TValueType>(
+		getChildMemberReadOnlyInfo: <Value>(
 			startObj: object,
-			fullQualifiedName: ValueOrArray<string>,
+			fullQualifiedName: string,
 			options: GetChildMemberReadOnlyInfoOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberReadOnlyInfo"]
-		) => ChildMemberReadOnlyInfoWithCallbacks<TValueType> | undefined;
+		) => ChildMemberReadOnlyInfoWithCallbacks<Value> | undefined;
 
-		getChildMemberValue: <TValueType = unknown>(
+		getChildMemberValue: <Value = unknown>(
 			startObj: object,
-			fullQualifiedName: ValueOrArray<string>,
+			fullQualifiedName: string,
 			options: GetChildMemberValueOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["getChildMemberValue"]
-		) => TValueType | undefined;
+		) => Value | undefined;
 
-		setChildMemberValue: <TValueType = unknown>(
+		setChildMemberValue: <Value = unknown>(
 			startObj: object,
-			fullQualifiedName: ValueOrArray<string>,
-			value: TValueType,
+			fullQualifiedName: string,
+			value: Value,
 			options: SetChildMemberValueOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["setChildMemberValue"]
 		) => void;
 
-		deleteChildMember: <TValueType = unknown>(
+		deleteChildMember: <Value = unknown>(
 			startObj: object,
-			fullQualifiedName: ValueOrArray<string>,
+			fullQualifiedName: string,
 			deleteEmptyParents: boolean,
 			options: DeleteChildMemberOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["deleteChildMember"]
 		) => void;
 
-		iterateChildMembers: <TValueType = unknown>(
+		iterateChildMembers: <Value = unknown>(
 			startObj: object,
-			callback: (child: ChildMemberInfoWithCallbacks<TValueType>) => void,
+			callback: (child: ChildMemberInfoWithCallbacks<Value>) => void,
 			options: IterateChildMemberOptions,
 			defaultImpl: ReactSimpleMappingDependencyInjection["objectModel"]["iterateChildMembers"]
 		) => void;

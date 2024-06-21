@@ -46,9 +46,9 @@ The custom callback will be called with all parameters and a callback to the def
 ## Object Model
 
 ### Types
-- **GetChildMemberInfoOptions&lt;*TValueType*&gt;**: Parameters for getting accessors for child members in object hierarchies 
+- **GetChildMemberInfoOptions&lt;*Value*&gt;**: Parameters for getting accessors for child members in object hierarchies 
 by providing the full qualified name of the member in the object tree ("name.name[0].name" etc.) Named values (@*name*) and root (/) references are supported, also the hierarchical iteration can be customized by providing custom callbacks.
-- **ChildMemberInfo&lt;*TValueType, RootObj*&gt;, ObjectWithFullQualifiedName**: Return type for getting accessors for child members. Provides iteration details and **getValue(), setValue()** and **deleteChildMember()** accessors.
+- **ChildMemberInfo&lt;*Value, RootObj*&gt;, ObjectWithFullQualifiedName**: Return type for getting accessors for child members. Provides iteration details and **getValue(), setValue()** and **deleteChildMember()** accessors.
 - **GetChildMemberValueOptions**: Parameter type for the getChildMemberValue() method. If the hierarchy is incomplete returns *undefined* and does not create missing hierarchy objects.
 - **SetChildMemberValueOptions**: Parameter type for the setChildMemberValue() method. If the hierarchy is incomplete creates the missing hierarchy objects.
 - **DeleteChildMemberOptions**: Parameter and return type for the **deleteChildMember()** method.

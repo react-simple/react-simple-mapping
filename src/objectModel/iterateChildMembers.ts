@@ -4,9 +4,9 @@ import { REACT_SIMPLE_MAPPING } from "data";
 import { getChildMemberInfoCallbacks } from "./internal/functions";
 
 // Iterates all child members which can be get, set and deleted. Returns callbacks to do so.
-function iterateChildMembers_default<TValueType = unknown>(
+function iterateChildMembers_default<Value = unknown>(
 	startObj: object,
-	callback: (child: ChildMemberInfoWithCallbacks<TValueType>) => void,
+	callback: (child: ChildMemberInfoWithCallbacks<Value>) => void,
 	options: IterateChildMemberOptions
 ) {
 	if (startObj) {
@@ -43,9 +43,9 @@ function iterateChildMembers_default<TValueType = unknown>(
 					...item,
 					names,
 					parents,
-					getValue: () => getMemberValue(item.obj, names, options) as TValueType | undefined,
-					setValue: value => setMemberValue(item.obj, names, value, options),
-					deleteMember: (deleteEmptyParents: boolean) => deleteMember(item.obj, names, options, parents, deleteEmptyParents)
+					getValue: () => getMemberValue(item.obj, names) as Value | undefined,
+					setValue: value => setMemberValue(item.obj, names, value),
+					deleteMember: (deleteEmptyParents: boolean) => deleteMember(item.obj, names, parents, deleteEmptyParents)
 				});
 
 				return childValue && !isValueType(childValue)
@@ -121,9 +121,9 @@ function iterateChildMembers_default<TValueType = unknown>(
 REACT_SIMPLE_MAPPING.DI.objectModel.iterateChildMembers = iterateChildMembers_default;
 
 // Iterates all child members which can be get, set and deleted. Returns callbacks to do so.
-export function iterateChildMembers<TValueType = unknown>(
+export function iterateChildMembers<Value = unknown>(
 	startObj: object,
-	callback: (child: ChildMemberInfoWithCallbacks<TValueType>) => void,
+	callback: (child: ChildMemberInfoWithCallbacks<Value>) => void,
 	options: IterateChildMemberOptions = {}
 ) {
 	REACT_SIMPLE_MAPPING.DI.objectModel.iterateChildMembers(startObj, callback, options, iterateChildMembers_default);

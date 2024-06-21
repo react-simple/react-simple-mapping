@@ -2,77 +2,42 @@ import { deepCopyObject } from "@react-simple/react-simple-util";
 import { GetChildMemberValueOptions, setChildMemberValue } from "objectModel";
 import { CHILD_MEMBER_TESTOBJ } from "objectModel/test.data";
 
-it('setChildMemberValue.arrayPath', () => {
-	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	setChildMemberValue(copy, ["a", "b", "c"], 2);
-
-	expect(copy.a.b.c).toBe(2);
-});
-
-it('setChildMemberValue.stringPath', () => {
+it('setChildMemberValue', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	setChildMemberValue(copy, "a.b.c", 2);
 
 	expect(copy.a.b.c).toBe(2);
 });
 
-it('setChildMemberValue.nonExistingMember.stringPath', () => {
+it('setChildMemberValue.nonExistingMember', () => {
 	const data: any = {};
 	setChildMemberValue(data, "a.b.c", 2);
 
 	expect(data.a?.b?.c).toBe(2);
 });
 
-it('setChildMemberValue.array.arrayPath[0]', () => {
-	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	setChildMemberValue(copy, ["a", "b", "array[0]"], 22);
-
-	expect(copy.a.b.array[0]).toBe(22);
-});
-
-it('setChildMemberValue.array.arrayPath.[0]', () => {
-	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	setChildMemberValue(copy, ["a", "b", "array.[0]"], 22);
-
-	expect(copy.a.b.array[0]).toBe(22);
-});
-
-it('setChildMemberValue.array.arrayPath/[0]', () => {
-	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	setChildMemberValue(copy, ["a", "b", "array", "[0]"], 22);
-
-	expect(copy.a.b.array[0]).toBe(22);
-});
-
-it('setChildMemberValue.array.stringPath[0]', () => {
+it('setChildMemberValue.array.path[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	setChildMemberValue(copy, "a.b.array[0]", 22);
 
 	expect(copy.a.b.array[0]).toBe(22);
 });
 
-it('setChildMemberValue.array.stringPath.[0]', () => {
+it('setChildMemberValue.array.path.[0]', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	setChildMemberValue(copy, "a.b.array.[0]", 22);
 
 	expect(copy.a.b.array[0]).toBe(22);
 });
 
-it('setChildMemberValue.nonExistingMember.array.stringPath', () => {
+it('setChildMemberValue.nonExistingMember.array', () => {
 	const data: any = {};
 	setChildMemberValue(data, "a.b.array[0]", 22);
 
 	expect(data?.a?.b?.array?.[0]).toBe(22);
 });
 
-it('setChildMemberValue.stringPath.customSeparator', () => {
-	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
-	setChildMemberValue(copy, "a/b/c", 2, { pathSeparator: "/" });
-
-	expect(copy.a.b.c).toBe(2);
-});
-
-it('setChildMemberValue.stringPath.rootObj', () => {
+it('setChildMemberValue.path.rootObj', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const options = { rootObj: copy };
 	setChildMemberValue(copy.a.b, "/a.b.c", 2, options);
@@ -80,7 +45,7 @@ it('setChildMemberValue.stringPath.rootObj', () => {
 	expect(copy.a.b.c).toBe(2);
 });
 
-it('setChildMemberValue.stringPath.namedObjs', () => {
+it('setChildMemberValue.path.namedObjs', () => {
 	const copy = deepCopyObject(CHILD_MEMBER_TESTOBJ);
 	const options: GetChildMemberValueOptions = {
 		getNamedObj: name => name === "bbb" ? copy.a.b : undefined

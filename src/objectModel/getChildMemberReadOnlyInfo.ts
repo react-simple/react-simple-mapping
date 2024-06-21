@@ -1,4 +1,4 @@
-import { ValueOrArray, isArray, stringAppend } from "@react-simple/react-simple-util";
+import { isArray, stringAppend } from "@react-simple/react-simple-util";
 import {
 	ObjectWithFullQualifiedName, ChildMemberInfo, FullQualifiedName, ChildMemberReadOnlyInfoWithCallbacks, GetChildMemberReadOnlyInfoOptions
 } from "./types";
@@ -11,33 +11,37 @@ import { getChildMemberInfoCallbacks, getChildMemberRootObjAndPath } from "./int
 // Returns the last object which has the member to be set or get. (Returned 'name' is the last part of 'path'.)
 // If createMissingChildObjects is 'true' will create the complete structure and return member info.
 // If createMissingChildObjects is 'false' and the structure is not complete, won't create missing object and will return undefined.
-function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
+function getChildMemberReadOnlyInfo_default<Value = unknown>(
 	startObj: object,
-	fullQualifiedName: ValueOrArray<string>,
+	fullQualifiedName: string,
 	options: GetChildMemberReadOnlyInfoOptions
-): ChildMemberReadOnlyInfoWithCallbacks<TValueType> | undefined {
+): ChildMemberReadOnlyInfoWithCallbacks<Value> | undefined {
+	// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
+	const { getMemberValue } = getChildMemberInfoCallbacks(options);
+
 	const prep = getChildMemberRootObjAndPath(startObj, fullQualifiedName, options);
 	const rootObj = options.rootObj || startObj;
 
 	let obj = prep.obj;
 	const path = prep.path;
 
-	if (!obj || !path?.length) {
+	if (!obj) {
+		return undefined;
+	}
+
+	if (!path?.length) {
 		return {
 			startObj,
 			rootObj,
 			obj: startObj as any,
-			names: { name: "", fullQualifiedName: "" },
+			names: { name: "", fullQualifiedName },
 			parents: [],
-			getValue: () => obj
+			getValue: () => getMemberValue(obj, { fullQualifiedName, name: "" }) as (Value | undefined)
 		};
 	}
 
 	const parents: ObjectWithFullQualifiedName[] = [{ obj, names: { name: "", fullQualifiedName: "" } }];
 	let parentNames: FullQualifiedName = { name: "", fullQualifiedName: "" };
-
-	// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
-	const { getMemberValue } = getChildMemberInfoCallbacks(options);
 
 	// 1) Iterate objects, except the last in path
 	// skip the last item
@@ -56,7 +60,7 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 
 		if (openingBrace < 0) {
 			// name only
-			child = getMemberValue(obj, names, options);
+			child = getMemberValue(obj, names);
 
 			if (child === undefined || child === null) {
 				return undefined;
@@ -71,7 +75,7 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 			};
 
 			// child = obj[index];
-			child = getMemberValue(obj, arrayIndexNames, options);
+			child = getMemberValue(obj, arrayIndexNames);
 
 			if (child === undefined || child === null) {
 				return undefined;
@@ -79,7 +83,10 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 		}
 		else {
 			// name[index], name.[index]
-			const arrayName = currentName[openingBrace - 1] === "." ? currentName.substring(0, openingBrace - 1) : currentName.substring(0, openingBrace);
+			const arrayName = currentName[openingBrace - 1] === "."
+				? currentName.substring(0, openingBrace - 1)
+				: currentName.substring(0, openingBrace);
+			
 			const arrayIndex = currentName.substring(openingBrace + 1, currentName.length - 1); // without braces
 
 			// the name of the array member without the index
@@ -88,7 +95,7 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 				fullQualifiedName: stringAppend(parentNames.fullQualifiedName, arrayName, ".")
 			};
 
-			const array = getMemberValue(obj, arrayNames, options) as unknown[];
+			const array = getMemberValue(obj, arrayNames) as unknown[];
 
 			if (array === undefined || array === null) {
 				return undefined;
@@ -101,7 +108,7 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 			};
 
 			// child = (array as any)[index];
-			child = getMemberValue(array, arrayIndexNames, options);
+			child = getMemberValue(array, arrayIndexNames);
 
 			if (child === undefined || child === null) {
 				return undefined;
@@ -117,7 +124,7 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 	const currentName = path[path.length - 1];
 	const openingBrace = currentName.endsWith("]") ? currentName.lastIndexOf("[") : -1;
 	
-	// 2) return accessors to the last item in path
+	// 2) Return accessors to the last item in path
 	if (openingBrace < 0) {
 		const names: FullQualifiedName = {
 			name: currentName,
@@ -135,14 +142,17 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 		// name only
 		return {
 			...info,
-			getValue: () => getMemberValue(obj, names, options) as TValueType | undefined
+			getValue: () => getMemberValue(obj, names) as Value | undefined
 		};
 	}
 	else if (openingBrace > 0) {
 		// name[index], name.[index]
-		const arrayName = currentName[openingBrace - 1] === "." ? currentName.substring(0, openingBrace - 1) : currentName.substring(0, openingBrace);
+		const arrayName = currentName[openingBrace - 1] === "."
+			? currentName.substring(0, openingBrace - 1)
+			: currentName.substring(0, openingBrace);
+		
 		const arrayIndex = currentName.substring(openingBrace + 1, currentName.length - 1); // without braces
-		const arrayIndexValue = parseFloat(arrayIndex);
+		// const arrayIndexValue = parseFloat(arrayIndex);
 
 		// the name of the array member without the index
 		const arrayNames: FullQualifiedName = {
@@ -156,7 +166,7 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 			fullQualifiedName: `${arrayNames.fullQualifiedName}[${arrayIndex}]` // currentName might contain the dot
 		};
 
-		const array = getMemberValue(obj, arrayNames, options);
+		const array = getMemberValue(obj, arrayNames);
 
 		if (array === undefined || array === null) {
 			return undefined;
@@ -174,8 +184,8 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 			parentArray: isArray(array) ? { array, index: arrayIndex } : undefined,
 			// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
 			getValue: () => {
-				// return (array as any)[index] as TValueType | undefined;
-				return getMemberValue(array as object, arrayIndexNames, options) as TValueType | undefined;
+				// return (array as any)[index] as Value | undefined;
+				return getMemberValue(array as object, arrayIndexNames) as Value | undefined;
 			}
 		};
 	}
@@ -202,7 +212,7 @@ function getChildMemberReadOnlyInfo_default<TValueType = unknown>(
 			// getValue(), setValue, deleteChildMember() callbacks are not used for array items only for object members
 			getValue: () => {
 				// return obj[arrayIndex];
-				return getMemberValue(array, names, options) as TValueType | undefined;
+				return getMemberValue(array, names) as Value | undefined;
 			}
 		};
 	}
@@ -214,11 +224,11 @@ REACT_SIMPLE_MAPPING.DI.objectModel.getChildMemberReadOnlyInfo = getChildMemberR
 // Understands array indexes, for example: memberName1.memberName2[index].memberName3
 // Does not understand standalone indexes, for example: memberName1.memberName2.[index].memberName3
 // Returns the last object which has the member to be set or get. (Returned 'name' is the last part of 'path'.)
-export function getChildMemberReadOnlyInfo<TValueType = unknown>(
+export function getChildMemberReadOnlyInfo<Value = unknown>(
 	startObj: object,
-	fullQualifiedName: ValueOrArray<string>,
+	fullQualifiedName: string,
 	options: GetChildMemberReadOnlyInfoOptions = {}
-): ChildMemberReadOnlyInfoWithCallbacks<TValueType> | undefined {
+): ChildMemberReadOnlyInfoWithCallbacks<Value> | undefined {
 	return REACT_SIMPLE_MAPPING.DI.objectModel.getChildMemberReadOnlyInfo(
 		startObj, fullQualifiedName, options, getChildMemberReadOnlyInfo_default
 	);
